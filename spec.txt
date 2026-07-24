@@ -1,0 +1,29 @@
+// when a file is present, it will be included as raw bytes separated from json by magic byte 0x1C
+// all strings should be split by the magic byte before attempting to parse json to prevent errors
+// for example:
+// {someJsonGoesHere: true}\0x1CRAW FILE DATA
+// note the raw file data may also contain the magic byte, so only split by the first one
+
+// client -> server
+{ type: "createAccount", username: str, password: str }
+{ type: "login", username: str, password: str }
+{ type: "getGroupInfo", id: int }
+{ type: "getMessages", channelId: int, index: int } // index -1 for latest
+{ type: "typingStatus", isTyping: bool }
+{ type: "sendMessage", channelId: int, contents: str, fileName: str? } // if fileName is not null, packet contains file
+{ type: "getFile", id: int }
+{ type: "getUserInfo", username: str }
+{ type: "setPfp" fileName: str } // packet contains file
+{ type: "createThing", thingType: str, name: str }
+{ type: "renameThing", thingType: str, id: int, name: str }
+{ type: "deleteThing", thingType: str, id: int }
+{ type: "inviteUser", groupId: int, userId: int }
+
+// server -> client
+{ type: "loginFailed", message: str }
+{ type: "groupList", groups: [ { id: int, name: str } ] }
+{ type: "groupInfo", channels: [ { id: int, name: str } ] }
+{ type: "message", channelId: int, userId: int, contents: str, fileId: int? }
+{ type: "file", id: int, fileName: str } // packet contains file
+{ type: "typingIndicator", channelId: int, usersTyping: [ int ] }
+{ type: "userInfo", id: int, name: str, pfpId: int }
