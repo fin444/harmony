@@ -1,7 +1,26 @@
-<script>
-const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port)
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Disclone</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+    <h1>Disclone</h1>
+    <script src="script.js"></script>
+  </body>
 
-socket.addEventListener("message", (event) => {
-	console.log("message from server:", event.data)
-})
-</script>
+
+
+
+	<script>
+		const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port)
+
+		socket.addEventListener("message", (event) => {
+			console.log("message from server:", event.data)
+		})
+	</script>
+</html>
+
+
