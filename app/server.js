@@ -4,6 +4,7 @@ import {Pool} from "pg"
 import {WebSocketServer} from "ws"
 
 import env from "../env.json" with {type: "json"}
+import {initHTTP} from "./http.js"
 import {initWebsocket} from "./websocket.js"
 
 // database init
@@ -16,7 +17,10 @@ pool.connect().then(() => {
 const app = express()
 const server = createServer(app)
 const wss = new WebSocketServer({server})
+
+// webserver content
 app.use(express.static("public"))
+initHTTP(app)
 initWebsocket(wss)
 
 // launch webserver
