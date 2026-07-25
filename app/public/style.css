@@ -4,8 +4,10 @@
 
 }
 
+
+
 h1 {
-    margin: 20px;
+
     text-align: left;
 }
 
@@ -13,12 +15,15 @@ body {
 }
 
 div {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
     gap: 10px;
+    
+}
+
+.left-vert-align {
+    display: flex;
+    justify-content: flex-start ;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 table {
