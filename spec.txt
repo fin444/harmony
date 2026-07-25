@@ -1,3 +1,15 @@
+// ---------
+// http spec
+// ---------
+/                                 // presents login/signup page (login.html)
+/login?username=str&password=str  // 200 response body will contain a token
+/signup?username=str&password=str // 200 response body will contain a token
+/app?token=str                    // presents main app (app.html) - token will be sent over websocket to initialize connection
+
+// --------------
+// websocket spec
+// --------------
+
 // when a file is present, it will be included as raw bytes separated from json by magic byte 0x1C
 // all strings should be split by the magic byte before attempting to parse json to prevent errors
 // for example:
@@ -5,8 +17,7 @@
 // note the raw file data may also contain the magic byte, so only split by the first one
 
 // client -> server
-{ type: "createAccount", username: str, password: str }
-{ type: "login", username: str, password: str }
+{ type: "token", token: str }
 { type: "getGroupInfo", id: int }
 { type: "getMessages", channelId: int, index: int } // index -1 for latest
 { type: "typingStatus", isTyping: bool }
@@ -20,7 +31,7 @@
 { type: "inviteUser", groupId: int, userId: int }
 
 // server -> client
-{ type: "loginFailed", message: str }
+{ type: "invalidToken" }
 { type: "groupList", groups: [ { id: int, name: str } ] }
 { type: "groupInfo", id: int, channels: [ { id: int, name: str } ] }
 { type: "messages", channelId: int, messages: [ { index: int, userId: int, contents: str, fileId: int? } ] }
