@@ -1,13 +1,13 @@
 import {checkToken, tryLogin, trySignup} from "./account.js"
 
-function handleLogin(query, res, fn) {
+async function handleLogin(query, res, fn) {
 	if (typeof query.username !== "string" || typeof query.password !== "string") {
 		res.statusCode = 400
 		res.send("Bad request")
 		return
 	}
 
-	let token = fn(query.username, query.password)
+	let token = await fn(query.username, query.password)
 	if (token === null) {
 		res.statusCode = 401
 		res.send("Invalid login")
