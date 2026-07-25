@@ -1,30 +1,25 @@
 // ---------
 // http spec
 // ---------
-/                                 // presents login/signup page (login.html)
-/login?username=str&password=str  // 200 response body will contain a token
-/signup?username=str&password=str // 200 response body will contain a token
-/app?token=str                    // presents main app (app.html) - token will be sent over websocket to initialize connection
+GET /                                 // presents login/signup page (login.html)
+GET /login?username=str&password=str  // 200 response body will contain a token
+GET /signup?username=str&password=str // 200 response body will contain a token
+GET /app?token=str                    // presents main app (app.html) - token will be sent over websocket to initialize connection
+GET /file?id=int&token=str            // 200 response body contains file
+PUT /file?name=str&token=str          // request body contains file, 200 response body contains file id
 
 // --------------
 // websocket spec
 // --------------
-
-// when a file is present, it will be included as raw bytes separated from json by magic byte 0x1C
-// all strings should be split by the magic byte before attempting to parse json to prevent errors
-// for example:
-// {someJsonGoesHere: true}\0x1CRAW FILE DATA
-// note the raw file data may also contain the magic byte, so only split by the first one
 
 // client -> server
 { type: "token", token: str }
 { type: "getGroupInfo", id: int }
 { type: "getMessages", channelId: int, index: int } // index -1 for latest
 { type: "typingStatus", isTyping: bool }
-{ type: "sendMessage", channelId: int, contents: str, fileName: str? } // if fileName is not null, packet contains file
-{ type: "getFile", id: int }
+{ type: "sendMessage", channelId: int, contents: str, fileId: int? }
 { type: "getUserInfo", username: str }
-{ type: "setPfp" fileName: str } // packet contains file
+{ type: "setPfp", fileId: int }
 { type: "createThing", thingType: str, name: str }
 { type: "renameThing", thingType: str, id: int, name: str }
 { type: "deleteThing", thingType: str, id: int }
@@ -35,6 +30,5 @@
 { type: "groupList", groups: [ { id: int, name: str } ] }
 { type: "groupInfo", id: int, channels: [ { id: int, name: str } ] }
 { type: "messages", channelId: int, messages: [ { index: int, userId: int, contents: str, fileId: int? } ] }
-{ type: "file", id: int, fileName: str } // packet contains file
 { type: "typingIndicator", channelId: int, usersTyping: [ int ] }
 { type: "userInfo", id: int, name: str, pfpId: int }
