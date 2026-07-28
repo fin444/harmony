@@ -1,4 +1,4 @@
-import {checkToken, tryLogin, trySignup} from "./account.js"
+import {tokenUser, tryLogin, trySignup} from "./account.js"
 
 async function handleLogin(query, res, fn) {
 	if (typeof query.username !== "string" || typeof query.password !== "string") {
@@ -23,12 +23,12 @@ function validateToken(token, res) {
 		return false
 	}
 
-	if (checkToken(token)) {
-		return true
-	} else {
+	if (tokenUser(token) === undefined) {
 		res.statusCode = 401
 		res.send("Access denied")
 		return false
+	} else {
+		return true
 	}
 }
 

@@ -12,8 +12,8 @@ function generateToken(id) {
 	}
 }
 
-export function checkToken(token) {
-	return token in tokens
+export function tokenUser(token) {
+	return tokens[token]
 }
 
 export async function tryLogin(username, password) {
