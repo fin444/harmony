@@ -11,6 +11,11 @@ export const db = {
 		})
 	},
 
+	// group
+	getUserGroups: async function(id) {
+		return (await pool.query(`select * from "group_user" inner join "group" on "group_user"."groupId" = "group"."id" where "group_user"."userId" = $1`, [id])).rows
+	},
+
 	// user
 	getUser: async function(id) {
 		return (await pool.query(`select * from "user" where "id" = $1`, [id])).rows[0]
