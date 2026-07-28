@@ -41,3 +41,6 @@ create table "message" (
 	"content" varchar(512) not null,
 	"timestamp" integer not null
 );
+
+-- force this file to always have ID 1
+insert into "file"("name") values('default-pfp.png');
