@@ -1,9 +1,3 @@
-// const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port)
-
-// socket.addEventListener("message", (event) => {
-//     console.log("message from server:", event.data)
-// })
-
 let usernameField = document.getElementById("username");
 let passwordField = document.getElementById("password");
 
@@ -12,9 +6,41 @@ submitButton.addEventListener("click", onSubmitButtonPress);
 
 let stateText = document.getElementById("state");
 
+function loginFetch(username, password){
+    fetch(`/login?username=${username}&password=${password}`, {
+        method: 'GET', 
+        headers: {
+        },
+    }).then(response => {
+        console.log("RESPONSE HEADER: ", response);
+        return response.text();
+    }).then(body => {
+        appFetch(body);
+    }).catch(error => {
+        console.log("ERROR OCCURRED: ", error);
+    });
+}
+
+function appFetch(token) {
+    fetch(`/app?token=${token}`, {
+        method: 'GET', 
+        headers: {
+        },
+    }).then(response => {
+        console.log("RESPONSE HEADER: ", response);
+        return response.text();
+    }).then(body => {
+        document.open();
+        document.write(body);
+        document.close();
+    }).catch(error => {
+        console.log("ERROR OCCURRED: ", error);
+    });
+}
 
 
-function onSubmitButtonPress() {
+function onSubmitButtonPress(event) {
+    event.preventDefault();
     stateText.style.color = "black";
     stateText.textContent = "";
     if(usernameField.value.length === 0) {
@@ -28,10 +54,6 @@ function onSubmitButtonPress() {
         return;
     }
     stateText.textContent = "Loading...";
-    let data = JSON.stringify({"type":"login", "username":usernameField.value, "password":passwordField.value});
-
-
-
-    // socket.send(data);
+    loginFetch(usernameField.value, passwordField.value);
 }
 
