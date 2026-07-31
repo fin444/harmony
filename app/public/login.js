@@ -22,20 +22,8 @@ function loginFetch(username, password){
 }
 
 function appFetch(token) {
-    fetch(`/app?token=${token}`, {
-        method: 'GET', 
-        headers: {
-        },
-    }).then(response => {
-        console.log("RESPONSE HEADER: ", response);
-        return response.text();
-    }).then(body => {
-        document.open();
-        document.write(body);
-        document.close();
-    }).catch(error => {
-        console.log("ERROR OCCURRED: ", error);
-    });
+
+    window.location.href = `/app?token=${token}`;
 }
 
 
