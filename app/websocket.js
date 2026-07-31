@@ -12,7 +12,7 @@ function send(socket, type, data) {
 
 // message types
 const specs = {
-	"token": {token: "string"}
+	"token": {token: "str"}
 }
 const handlers = {
 	"token": mToken
@@ -36,12 +36,39 @@ async function mToken(data, num, socket) {
 // main functions
 function validateSpec(data, spec) {
 	for (const [key, type] of Object.entries(spec)) {
-		if (type.endsWith("?")) {
-			if (data[key] !== null && typeof data[key] !== type.substring(0, type.length - 1)) {
-				return false
+		let t = type, v = data[key]
+		// nullability
+		if (t.endsWith("?")) {
+			if (v === null || v === undefined) {
+				continue
 			}
-		} else if (typeof data[key] !== type) {
-			return false
+			t = t.substring(0, t.length - 1)
+		}
+		// types
+		switch(t) {
+			case "bool":
+				if (typeof v !== "boolean") {
+					return false
+				}
+				break
+			case "id":
+				if (!Number.isInteger(v) || v < 1) {
+					return false
+				}
+				break
+			case "int":
+				if (!Number.isInteger(v)) {
+					return false
+				}
+				break
+			case "str":
+				if (typeof v !== "string") {
+					return false
+				}
+				break
+			default:
+				console.log("unknown spec type!", type)
+				return false
 		}
 	}
 	return true
