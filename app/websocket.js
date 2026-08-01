@@ -1,42 +1,32 @@
 import {tokenUser} from "./account.js"
-import {db} from "./database.js"
+import {specs, handlers} from "./messages.js"
 
 const users = {}
 const sockets = {}
 var socketNum = 0
 
 // helpers
-function send(socket, type, data) {
-	socket.send(JSON.stringify({type: type, ...data}))
-}
-
-// message types
-const specs = {
-	"token": {token: "str"}
-}
-const handlers = {
-	"token": mToken
-}
-
-async function mToken(data, num, socket) {
-	if (num in users) {
-		console.log("user", num, "tried to pass their token twice!")
-		return
-	}
-	let user = tokenUser(data.token)
-	if (user === undefined) {
-		send(socket, "invalidToken", {})
-		return
-	}
+export function addUser(num, user, socket) {
 	users[num] = user
 	sockets[num] = socket
-	send(socket, "groupList", {groups: await db.getUserGroups(user)})
+}
+
+export function broadcast(filter, type, data) {
+	for (num of users) {
+		if (filter(users[num])) {
+			send(sockets[num], type, data)
+		}
+	}
+}
+
+export function send(socket, type, data) {
+	socket.send(JSON.stringify({type: type, ...data}))
 }
 
 // main functions
 function validateSpec(data, spec) {
-	for (const [key, type] of Object.entries(spec)) {
-		let t = type, v = data[key]
+	for (key of spec) {
+		let type = spec[key], t = type, v = data[key]
 		// nullability
 		if (t.endsWith("?")) {
 			if (v === null || v === undefined) {
@@ -95,7 +85,7 @@ async function handleMessage(str, num, socket) {
 		return
 	}
 	try {
-		await handlers[data.type](data, num, socket)
+		await handlers[data.type](data, num, users[num], socket)
 	} catch(e) {
 		console.log("error handling message!", data)
 		console.log(e)
