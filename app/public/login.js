@@ -29,14 +29,15 @@ function loginFetch(username, password){
     }).then(response => {
         console.log("RESPONSE HEADER: ", response);
         if(!response.ok) {
-            throw(response);
+            throw(response.text());
         }
         return response.text();
     }).then(body => {
         appFetch(body);
-    }).catch(error => {
+    }).catch(async error => {
+        const text = await error;
         console.log("ERROR OCCURRED: ", error);
-        errorStateText(error.statusText);
+        errorStateText(text);
     });
 }
 
@@ -50,14 +51,15 @@ function signupFetch(username, password){
     }).then(response => {
         console.log("RESPONSE HEADER: ", response);
         if(!response.ok) {
-            throw(response);
+            throw(response.text());
         }
         return response.text();
     }).then(body => {
         appFetch(body);
-    }).catch(error => {
+    }).catch(async error => {
+        const text = await error;
         console.log("ERROR OCCURRED: ", error);
-        errorStateText(error.statusText);
+        errorStateText(text);
     });
 }
 
