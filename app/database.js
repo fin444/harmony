@@ -13,17 +13,32 @@ export const db = {
 
 	// group
 	getUserGroups: async function(id) {
-		return (await pool.query(`select * from "group_user" inner join "group" on "group_user"."groupId" = "group"."id" where "group_user"."userId" = $1`, [id])).rows
+		return (await pool.query(
+			`select * from "group_user"
+				inner join "group" on "group_user"."groupId" = "group"."id"
+				where "group_user"."userId" = $1`,
+			[id]
+		)).rows
 	},
 
 	// user
 	getUser: async function(id) {
-		return (await pool.query(`select * from "user" where "id" = $1`, [id])).rows[0]
+		return (await pool.query(
+			`select * from "user" where "id" = $1`,
+			[id]
+		)).rows[0]
 	},
 	getUserByName: async function(username) {
-		return (await pool.query(`select * from "user" where "username" = $1`, [username])).rows[0]
+		return (await pool.query(
+			`select * from "user" where "username" = $1`,
+			[username]
+		)).rows[0]
 	},
 	addUser: async function(username, password, pfpId) {
-		return (await pool.query(`insert into "user"("username", "password", "pfpId") values($1, $2, $3) returning *`, [username, password, pfpId])).rows[0]
-	}
+		return (await pool.query(
+			`insert into "user"("username", "password", "pfpId")
+				values($1, $2, $3) returning *`,
+			[username, password, pfpId])
+		).rows[0]
+	},
 }
