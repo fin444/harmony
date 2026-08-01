@@ -72,23 +72,20 @@ async function handleMessage(str, num, socket) {
 		console.log("invalid message (json parse)", str)
 		return
 	}
+
 	if (data.type !== "token" && !(num in sockets)) {
 		console.log("invalid message (no auth)", data)
-		return
-	}
-	if (!(data.type in specs && data.type in handlers)) {
+	} else if (!(data.type in specs && data.type in handlers)) {
 		console.log("invalid message (unknown type)", data)
-		return
-	}
-	if (!validateSpec(data, specs[data.type])) {
+	} else if (!validateSpec(data, specs[data.type])) {
 		console.log("invalid message (spec fail)", data)
-		return
-	}
-	try {
-		await handlers[data.type](data, num, users[num], socket)
-	} catch(e) {
-		console.log("error handling message!", data)
-		console.log(e)
+	} else {
+		try {
+			await handlers[data.type](data, num, users[num], socket)
+		} catch(e) {
+			console.log("error handling message!", data)
+			console.log(e)
+		}
 	}
 }
 
