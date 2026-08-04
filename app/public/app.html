@@ -5,9 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Disclone</title>
     <style>
-      div {
+      * {
         border: 1px solid red;
         
+      }
+      input {
+        margin: 0px;
+        height: 30px;
       }
     </style>
 	<link rel="stylesheet" type="text/css" href="style.css">
@@ -22,7 +26,10 @@
       </div>
       <div id="chat" class="chat-view">
         <div id="messages" class="message-view"></div>
-        <input id="type" class="type-box" type="text"></input>
+        <div id="input" class="message-input-div">
+          <input id="type" class="type-box" type="text"></input>
+          <button id="send" class="send-button" type="submit">Send</button>
+        </div>
       </div>
 
     </div>
