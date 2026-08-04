@@ -25,7 +25,7 @@ export function send(socket, type, data) {
 
 // main functions
 function validateSpec(data, spec) {
-	for (key of spec) {
+	for (let key in spec) {
 		let type = spec[key], t = type, v = data[key]
 		// nullability
 		if (t.endsWith("?")) {
