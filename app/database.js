@@ -75,6 +75,12 @@ export const db = {
 			[name, groupId]
 		)).rows[0]
 	},
+	getGroupChannels: async function(group) {
+		return (await pool.query(
+			`select * from "channel" where "groupId" = $1`,
+			[group]
+		)).rows
+	},
 
 	// message
 	addMessage: async function(userId, channelId, fileId, content, timestamp) {
