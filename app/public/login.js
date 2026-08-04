@@ -19,7 +19,14 @@ function setStateText(text) {
     stateText.textContent = text;
 }
 
-setStateText("");
+
+window.addEventListener('pageshow', function(event) {
+  if (event.persisted) {
+    setStateText("");
+  }
+});
+
+
 
 function loginFetch(username, password){
     fetch(`/login?username=${username}&password=${password}`, {
