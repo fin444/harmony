@@ -42,7 +42,7 @@ async function sendGroupInfo(socket, group) {
 
 export const handlers = {
 	token: async function(data, num, user, socket) {
-		if (user === undefined) {
+		if (user !== undefined) {
 			console.log("user", num, user, "tried to pass their token twice!")
 			return
 		}
