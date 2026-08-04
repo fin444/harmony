@@ -4,4 +4,8 @@ const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.l
 socket.addEventListener("message", (event) => {
 	console.log("message from server:", JSON.parse(event.data))
 })
+
+function send(data) {
+	socket.send(JSON.stringify(data))
+}
 </script>
