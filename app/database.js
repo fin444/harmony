@@ -28,14 +28,6 @@ export const db = {
 			[name]
 		)).rows[0]
 	},
-	getUserGroups: async function(id) {
-		return (await pool.query(
-			`select * from "group_user"
-				inner join "group" on "group_user"."groupId" = "group"."id"
-				where "group_user"."userId" = $1`,
-			[id]
-		)).rows
-	},
 
 	// user
 	addUser: async function(username, password, pfpId) {
@@ -65,6 +57,14 @@ export const db = {
 				values($1, $2) returning *`,
 			[userId, groupId]
 		)).rows[0]
+	},
+	getUserGroups: async function(id) {
+		return (await pool.query(
+			`select * from "group_user"
+				inner join "group" on "group_user"."groupId" = "group"."id"
+				where "group_user"."userId" = $1`,
+			[id]
+		)).rows
 	},
 
 	// channel
