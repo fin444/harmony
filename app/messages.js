@@ -16,12 +16,28 @@ export const specs = {
 	inviteUser: {groupId: "id", userId: "id"},
 }
 
+function extractFields(obj, fields) {
+	if (Array.isArray(obj)) {
+		return obj.map((arr) => { return extractFields(arr, fields) })
+	}
+	let extracted = {}
+	for (let f of fields) {
+		extracted[f] = obj[f]
+	}
+	return extracted
+}
+
 async function sendGroupList(socket, user) {
-	send(socket, "groupList", {groups: await db.getUserGroups(user)})
+	send(socket, "groupList", {
+		groups: extractFields(await db.getUserGroups(user), ["id", "name"])
+	})
 }
 async function sendGroupInfo(socket, group) {
 	// TODO broadcast instead of send
-	send(socket, "groupInfo", {id: group, channels: await db.getGroupChannels(group)})
+	send(socket, "groupInfo", {
+		id: group,
+		channels: extractFields(await db.getGroupChannels(group), ["id", "name"])
+	})
 }
 
 export const handlers = {
