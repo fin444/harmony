@@ -88,8 +88,8 @@ export const handlers = {
 				console.log("thingType is channel but groupId is null", data)
 				return
 			}
-			let groups = await db.getUserGroups(user)
-			if (data.groupId in groups) {
+			let groups = (await db.getUserGroups(user)).map(obj => obj.groupId)
+			if (groups.includes(data.groupId)) {
 				await db.addChannel(data.name, data.groupId)
 				sendGroupInfo(socket, data.groupId)
 			} else {
