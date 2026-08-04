@@ -53,7 +53,7 @@ export const db = {
 	// group_user
 	addUserToGroup: async function(userId, groupId) {
 		return (await pool.query(
-			`insert into "user_group"("userId", "groupId")
+			`insert into "group_user"("userId", "groupId")
 				values($1, $2) returning *`,
 			[userId, groupId]
 		)).rows[0]
