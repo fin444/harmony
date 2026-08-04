@@ -11,7 +11,23 @@ export const db = {
 		})
 	},
 
+	// file
+	addFile: async function(name) {
+		return (await pool.query(
+			`insert into "file"("name")
+				values($1) returning *`,
+			[name]
+		)).rows[0]
+	},
+
 	// group
+	addGroup: async function(name) {
+		return (await pool.query(
+			`insert into "group"("name")
+				values($1) returning *`,
+			[name]
+		)).rows[0]
+	},
 	getUserGroups: async function(id) {
 		return (await pool.query(
 			`select * from "group_user"
@@ -22,6 +38,13 @@ export const db = {
 	},
 
 	// user
+	addUser: async function(username, password, pfpId) {
+		return (await pool.query(
+			`insert into "user"("username", "password", "pfpId")
+				values($1, $2, $3) returning *`,
+			[username, password, pfpId])
+		).rows[0]
+	},
 	getUser: async function(id) {
 		return (await pool.query(
 			`select * from "user" where "id" = $1`,
@@ -34,11 +57,31 @@ export const db = {
 			[username]
 		)).rows[0]
 	},
-	addUser: async function(username, password, pfpId) {
+
+	// group_user
+	addUserToGroup: async function(userId, groupId) {
 		return (await pool.query(
-			`insert into "user"("username", "password", "pfpId")
-				values($1, $2, $3) returning *`,
-			[username, password, pfpId])
-		).rows[0]
+			`insert into "user_group"("userId", "groupId")
+				values($1, $2) returning *`,
+			[userId, groupId]
+		)).rows[0]
+	},
+
+	// channel
+	addChannel: async function(name, groupId) {
+		return (await pool.query(
+			`insert into "channel"("name", "groupId")
+				values($1, $2) returning *`,
+			[name, groupId]
+		)).rows[0]
+	},
+
+	// message
+	addMessage: async function(userId, channelId, fileId, content, timestamp) {
+		return (await pool.query(
+			`insert into "message"("userId", "channelId", "fileId", "content", "timestamp")
+				values($1, $2, $3, $4, $5) returning *`,
+			[userId, channelId, fileId, content, timestamp]
+		)).rows[0]
 	},
 }
