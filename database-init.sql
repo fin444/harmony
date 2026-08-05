@@ -38,7 +38,7 @@ create table "message" (
 	"userId" integer not null references "user"("id"),
 	"channelId" integer not null references "channel"("id"),
 	"fileId" integer references "file"("id"),
-	"content" varchar(512) not null,
+	"contents" varchar(512) not null,
 	"timestamp" int8 not null
 );
 
