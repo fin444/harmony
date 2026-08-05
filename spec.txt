@@ -16,7 +16,7 @@ PUT /file?name=str&token=str          // request body contains file, 200 respons
 { type: "token", token: str }
 { type: "getGroupInfo", id: int }
 { type: "getMessages", channelId: int, index: int } // index -1 for latest
-{ type: "typingStatus", isTyping: bool }
+{ type: "typingStatus", channelId: int, isTyping: bool }
 { type: "sendMessage", channelId: int, contents: str, fileId: int? }
 { type: "getUserInfo", username: str }
 { type: "setPfp", fileId: int }
