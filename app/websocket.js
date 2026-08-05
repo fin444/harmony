@@ -90,6 +90,8 @@ async function handleMessage(str, num, socket) {
 }
 
 function handleClose(num) {
+	delete users[num]
+	delete sockets[num]
 	console.log("client disconnected")
 }
 
