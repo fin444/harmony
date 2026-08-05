@@ -39,7 +39,7 @@ create table "message" (
 	"channelId" integer not null references "channel"("id"),
 	"fileId" integer references "file"("id"),
 	"content" varchar(512) not null,
-	"timestamp" integer not null
+	"timestamp" int8 not null
 );
 
 -- force this file to always have ID 1

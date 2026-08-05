@@ -1,4 +1,4 @@
-import {Pool} from "pg"
+import {Pool, types} from "pg"
 
 import env from "../env.json" with {type: "json"}
 
@@ -6,6 +6,7 @@ const pool = new Pool(env)
 
 export const db = {
 	init: function() {
+		types.setTypeParser(20, parseInt)
 		pool.connect().then(() => {
 			console.log("connected to database")
 		})
