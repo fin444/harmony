@@ -82,6 +82,14 @@ export const db = {
 			[group]
 		)).rows
 	},
+	getChannelUsers: async function(id) {
+		return (await pool.query(
+			`select "group_user"."userId" from "group_user"
+				inner join "channel" on "group_user"."groupId" = "channel"."groupId"
+				where "channel"."id" = $1`,
+			[id]
+		)).rows
+	},
 
 	// message
 	addMessage: async function(userId, channelId, fileId, contents, timestamp) {
@@ -90,5 +98,16 @@ export const db = {
 				values($1, $2, $3, $4, $5) returning *`,
 			[userId, channelId, fileId, contents, timestamp]
 		)).rows[0]
+	},
+	getMessageIndex: async function(id) {
+		return (await pool.query(
+			`select "index" from (
+					select "id", row_number() over(order by "timestamp") "index"
+						from "message" where "channelId" = (
+							select "channelId" from "message" where "id" = $1
+						)
+				) as "indices" where "indices"."id" = $1`,
+			[id]
+		)).rows[0].index
 	},
 }

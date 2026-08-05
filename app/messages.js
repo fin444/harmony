@@ -67,8 +67,32 @@ export const handlers = {
 		// TODO
 	},
 
-		// TODO
 	sendMessage: async function(data, num, user, socket) {
+		let users = (await db.getChannelUsers(data.channelId)).map((o) => {return o.userId})
+		if (!users.includes(user)) {
+			console.log("can't send message because user is not in channel", data)
+			return
+		}
+
+		let message = await db.addMessage(
+			user,
+			data.channelId,
+			(data.fileId === null || data.fileId === undefined) ? null : data.fileId,
+			data.contents,
+			Date.now()
+		)
+		let index = await db.getMessageIndex(message.id)
+
+		broadcast(users, "messages", {
+			channelId: message.channelId,
+			messages: [{
+				index: index,
+				userId: user,
+				contents: message.contents,
+				fileId: message.fileId,
+				timestamp: message.timestamp
+			}]
+		})
 	},
 
 	getUserInfo: async function(data, num, user, socket) {
