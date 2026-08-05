@@ -27,6 +27,9 @@ function extractFields(obj, fields) {
 	return extracted
 }
 
+async function sendUserInfo(socket, user) {
+	send(socket, "userInfo", extractFields(await db.getUser(user), ["id", "username", "pfpId"]))
+}
 async function sendGroupList(socket, user) {
 	send(socket, "groupList", {
 		groups: extractFields(await db.getUserGroups(user), ["id", "name"])
@@ -52,6 +55,8 @@ export const handlers = {
 			return
 		}
 		addUser(num, user, socket)
+		send(socket, "validToken", {userId: user})
+		sendUserInfo(socket, user)
 		sendGroupList(socket, user)
 	},
 
