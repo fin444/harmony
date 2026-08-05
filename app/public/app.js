@@ -1,17 +1,42 @@
 // Socket stuff
 
+const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
 
 const receiveHandlers = {
-    invalidToken:       function () {},
-    groupList:          function (groups) {},
-    groupInfo:          function (id, channels) {},
-    messages:           function (channelId, messages) {},
-    typingIndicator:    function (channelId, usersTyping) {},
-    userInfo:           function (id, name, pfpId) {}
-
+    invalidToken:       function () {
+        window.location.href = "/";
+    },
+    validToken:         function (userId) {
+        console.log("Valid token message from server");
+        curUserId = userId;
+    },
+    groupList:          function (groups) {
+        console.log("Group list message from server");
+        populateGroupList(groups);
+        
+    },
+    groupInfo:          function (id, channels) {
+        console.log("Group info message from server");
+        if(curGroupId === id) populateChannelList(channels);
+    },
+    messages:           function (channelId, messages) {
+        console.log("Messages message from server");
+        if(curChannelId === channelId) populateMessages(messages);
+    },
+    typingIndicator:    function (channelId, usersTyping) {
+        console.log("Typing indicator message from server");
+        if(curChannelId === channelId) displayTypingIndicator(usersTyping);
+    },
+    userInfo:           function (id, name, pfpId) {
+        console.log("User info message from server");
+    }
 };
+
 const sendHandlers = {
-    token:          function (tok) {},
+    token:          function (tok) {
+        let data = {type: 'token', token: tok};
+        socket.send(JSON.stringify(data));
+    },
     getGroupInfo:   function (id) {},
     getMessages:    function (channelId, index) {},
     typingStatus:   function (isTyping) {},
@@ -24,10 +49,12 @@ const sendHandlers = {
     inviteUser:     function (groupId, userId) {},
 };
 
-const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port)
 
-socket.addEventListener('open', (event) => {
+socket.addEventListener('open', () => {
   console.log('WebSocket connected');
+  let urlParams = new URLSearchParams(window.location.search);
+  sendHandlers.token(urlParams.get('token'));
+  initializePage();
 });
 
 socket.addEventListener("message", (event) => {
@@ -59,12 +86,18 @@ socket.addEventListener("message", (event) => {
 
 // Constants
 
+const chatListElm = document.getElementById("chats");
 const messageInputFieldElm = document.getElementById("type");
 const messageSendButtonElm = document.getElementById("send");
 const sidebarProfileImageElm = document.getElementById("profile-image");
 const messageAreaElm = document.getElementById("messages");
 
 // Variables
+let curUserId = -1;
+let curGroupId = -1;
+let curChannelId = 0;
+let groupList = [];
+let channelList = [];
 
 let ownerPfp = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOaa8Hmv8r-hqG31BpFaSI-AlPdkFTnIeLHNbKgJVTYCRsm3zMR28O8nMT&s=10";
 let ownerUsername = "test_curuser";
@@ -73,16 +106,24 @@ let otherUsername = "test_other"
 
 // Functions
 
+function getFormattedDate(date) {
+    return date.toLocaleTimeString('en-US', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+}
+
+function populateGroupList() {
+
+}
+function populateChannelList() {
+
+}
+
 function setChatView(chatName, messages) {
-    // document.getElementById("header-chat-name").textContent = chatName;
-    // // TODO Set header image
-    // messageInputField.placeholder = "Message " + chatName;
 
-    // let messageAreaElm = document.getElementById("messages");
-    // messageAreaElm.replaceChildren();
-    // for(message in messages) {
-
-    // }
     
 }
 
@@ -121,11 +162,13 @@ function sendMessage() {
     let messageText = messageInputFieldElm.value;
     messageInputFieldElm.value = "";
     // TEMPORARY FUNCTIONALITY TEST - THIS WILL BE CHANGED!!
-    if (messageText !== "") messageAreaElm.prepend(getMessageDiv(messageText, ownerUsername, ownerPfp, Date.now(), ""));
+    if (messageText !== "") messageAreaElm.prepend(getMessageDiv(messageText, ownerUsername, ownerPfp, getFormattedDate(new Date()), ""));
 }
 
 function initializePage () {
+
     sidebarProfileImageElm.src = ownerPfp;
+    // setChatList();
 
     // Test alr exiting messages
     messageAreaElm.prepend(getMessageDiv("hi", ownerUsername, ownerPfp, "4 Aug 2026 13:59:59", ""));
@@ -140,6 +183,3 @@ messageInputFieldElm.addEventListener("keydown", function(event) {
     sendMessage();
   }
 });
-
-initializePage();
-
