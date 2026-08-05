@@ -29,6 +29,6 @@ PUT /file?name=str&token=str          // request body contains file, 200 respons
 { type: "invalidToken" }
 { type: "groupList", groups: [ { id: int, name: str } ] }
 { type: "groupInfo", id: int, channels: [ { id: int, name: str } ] }
-{ type: "messages", channelId: int, messages: [ { index: int, userId: int, contents: str, fileId: int? } ] }
+{ type: "messages", channelId: int, messages: [ { index: int, userId: int, contents: str, timestamp: int, fileId: int? } ] }
 { type: "typingIndicator", channelId: int, usersTyping: [ int ] }
 { type: "userInfo", id: int, name: str, pfpId: int }
