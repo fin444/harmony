@@ -69,6 +69,11 @@ let profileImageElm = document.getElementById("profile-image");
 profileImageElm.src = tempImg;
 
 messageSendButton.addEventListener("click", sendMessage);
+messageInputField.addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    sendMessage();
+  }
+});
 
 function sendMessage() {
     let messageText = messageInputField.value;
