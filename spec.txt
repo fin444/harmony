@@ -27,6 +27,7 @@ PUT /file?name=str&token=str          // request body contains file, 200 respons
 
 // server -> client
 { type: "invalidToken" }
+{ type: "validToken", userId: int }
 { type: "groupList", groups: [ { id: int, name: str } ] }
 { type: "groupInfo", id: int, channels: [ { id: int, name: str } ] }
 { type: "messages", channelId: int, messages: [ { index: int, userId: int, contents: str, timestamp: int, fileId: int? } ] }
