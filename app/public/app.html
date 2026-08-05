@@ -6,7 +6,7 @@
     <title>Disclone</title>
     <style>
       * {
-        /* border: 1px solid red; */
+        border: 1px solid red;
         
       }
       input {
@@ -18,12 +18,14 @@
   </head>
   <body>
     
-
+    <!-- App Body -->
     <div id="app" class="app-view">
+
       <!-- Sidebar -->
       <div id="sidebar" class="sidebar-view">
 
         <header id="sidebar-title" class="sidebar-title"><h2>Disclone</h2></header>
+        <div id="new-chat-div" style="margin-left:10px;"><button id="new-chat">+ New Chat</button></div>
 
         <div id="sidebar-content" class="sidebar-content">
 
@@ -36,8 +38,9 @@
 
       <!-- Chat View -->
       <div id="chat" class="chat-view">
+        <!-- Chat Header -->
         <header class="message-div-header">
-          <h3>James</h3>
+          <h3 id="header-chat-name">James</h3>
         </header>
         <div id="messages" class="message-view"></div>
         <div id="input" class="message-input-div">
