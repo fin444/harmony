@@ -20,15 +20,16 @@ PUT /file?name=str&token=str          // request body contains file, 200 respons
 { type: "sendMessage", channelId: int, contents: str, fileId: int? }
 { type: "getUserInfo", username: str }
 { type: "setPfp", fileId: int }
-{ type: "createThing", thingType: str, name: str }
+{ type: "createThing", thingType: str, name: str, groupId: int? }
 { type: "renameThing", thingType: str, id: int, name: str }
 { type: "deleteThing", thingType: str, id: int }
 { type: "inviteUser", groupId: int, userId: int }
 
 // server -> client
 { type: "invalidToken" }
+{ type: "validToken", userId: int }
 { type: "groupList", groups: [ { id: int, name: str } ] }
 { type: "groupInfo", id: int, channels: [ { id: int, name: str } ] }
-{ type: "messages", channelId: int, messages: [ { index: int, userId: int, contents: str, fileId: int? } ] }
+{ type: "messages", channelId: int, messages: [ { index: int, userId: int, contents: str, timestamp: int, fileId: int? } ] }
 { type: "typingIndicator", channelId: int, usersTyping: [ int ] }
 { type: "userInfo", id: int, name: str, pfpId: int }
