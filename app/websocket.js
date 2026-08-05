@@ -11,9 +11,9 @@ export function addUser(num, user, socket) {
 	sockets[num] = socket
 }
 
-export function broadcast(filter, type, data) {
-	for (num of users) {
-		if (filter(users[num])) {
+export function broadcast(userList, type, data) {
+	for (let num in Object.keys(users)) {
+		if (userList.includes(users[num])) {
 			send(sockets[num], type, data)
 		}
 	}
