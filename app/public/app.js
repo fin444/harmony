@@ -1,17 +1,5 @@
 const tempImg = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOaa8Hmv8r-hqG31BpFaSI-AlPdkFTnIeLHNbKgJVTYCRsm3zMR28O8nMT&s=10";
-
-
 const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port)
-
-socket.addEventListener("message", (event) => {
-	console.log("message from server:", event.data)
-    switch (event.data.type) {
-
-    }
-})
-
-
-
 const handlers = {
     invalidToken: function () {
 
@@ -34,7 +22,18 @@ const handlers = {
 
 };
 
-console.log(window.location.href);
+
+const messageArea = document.getElementById("messages");
+const messageInputField = document.getElementById("type");
+const messageSendButton = document.getElementById("send");
+
+socket.addEventListener("message", (event) => {
+	console.log("message from server:", event.data)
+    switch (event.data.type) {
+
+    }
+});
+
 
 
 function createMessageDiv(message, username, pfpHref, timestamp, file) {
@@ -65,7 +64,19 @@ function createMessageDiv(message, username, pfpHref, timestamp, file) {
     return parentElm;
 }
 
-let messageArea = document.getElementById("messages");
+
+let profileImageElm = document.getElementById("profile-image");
+profileImageElm.src = tempImg;
+
+messageSendButton.addEventListener("click", sendMessage);
+
+function sendMessage() {
+    let messageText = messageInputField.value;
+    messageInputField.value = "";
+    // TEMPORARY FUNCTIONALITY TEST - THIS WILL BE CHANGED!!
+    if (messageText !== "") messageArea.prepend(createMessageDiv(messageText, "james", tempImg, Date.now(), ""));
+}
+
 
 messageArea.prepend(createMessageDiv("hi", "james", tempImg, "4 Aug 2026 13:59:59", ""));
 messageArea.prepend(createMessageDiv("hi 2", "james 2", tempImg, "4 Aug 2026 14:00:02", ""));

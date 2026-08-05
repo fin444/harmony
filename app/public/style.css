@@ -1,7 +1,17 @@
 :root {
+    color-scheme: light dark;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    
+
+    --bg-primary: #f5f5f5;
+    --text-primary: #121212;
+    --elm-highlight-color: rgb(from var(--text-primary) r g b / 0.1);
+    --accent-color: #60a5fa;
     --header-margin: 10px;
     --chat-font-size: 14px;
+    
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
 }
 
 *, *::before, *::after {
@@ -19,10 +29,6 @@ body {
 h1, h2, h3 {
     text-align: left;
     margin-left: var(--header-margin);
-}
-
-div {
-    /* gap: 10px; */
 }
 
 .left-vert-align {
@@ -43,8 +49,27 @@ div {
 }
 
 .sidebar-view {
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(from var(--text-primary) r g b / 0.1);
     width: 20%;
+    min-width: 175px;
+    /* box-shadow: 0px 3px red; */
     /* border: 2px solid rgb(255, 0, 0); */
+}
+.sidebar-content {
+    flex-grow: 1;
+}
+
+.sidebar-footer {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    gap: 10px;
+}
+
+.sidebar-footer-pfp {
+    margin-left: 10px;
 }
 
 /* --- CHAT VIEW & MESSAGE VIEW UPDATES --- */
@@ -64,8 +89,13 @@ div {
     /* border: 2px solid purple; */
     flex: 1; 
     overflow-y: auto; 
-    flex-wrap: wrap-reverse;
-    
+    flex-wrap: none;
+}
+
+.message-view-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .message-input-div {
@@ -75,28 +105,46 @@ div {
     margin: 10px;
     height: 30px;
     flex-direction: row;
+    flex-wrap: nowrap;
 }
+
+.type-box {
+    font-size: var(--chat-font-size);
+    flex: 1;
+}
+
+.send-button {
+    flex: 0 0 auto;
+}
+
 
 .chat-element-div {
     display: flex;
     align-items: center;
-    margin-left: 10px;
     gap: 10px;
+} 
+.chat-element-div:hover {
+    background-color: var(--elm-highlight-color);
 }
+
 
 .chat-timestamp {
     font-size: 10px;
     color: gray;
+    margin-left: 10px;
 }
 .chat-message {
     font-size: var(--chat-font-size);
 }
+
 .chat-username {
     color: blue;
 }
-.type-box {
-    font-size: var(--chat-font-size);
+.chat-username:hover {
+    cursor: pointer;
+    text-decoration: underline;
 }
+
 
 
 .chat-profile-pic {
@@ -106,9 +154,22 @@ div {
     object-fit: cover;
     border-radius: 50%;
 }
+.chat-profile-pic:hover {
+    cursor: pointer;
+}
 
 table {
     border: 1px black solid;
     border-collapse: collapse;
     margin: 10px;
+}
+
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Overwrite variables with Dark Mode Colors */
+    --bg-primary: #121212;
+    --text-primary: #f5f5f5;
+    --accent-color: #60a5fa;
+  }
 }

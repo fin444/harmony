@@ -6,7 +6,7 @@
     <title>Disclone</title>
     <style>
       * {
-        border: 1px solid red;
+        /* border: 1px solid red; */
         
       }
       input {
@@ -20,15 +20,29 @@
     
 
     <div id="app" class="app-view">
-      
+      <!-- Sidebar -->
       <div id="sidebar" class="sidebar-view">
-        <h2>Disclone App</h2>
+
+        <header id="sidebar-title" class="sidebar-title"><h2>Disclone</h2></header>
+
+        <div id="sidebar-content" class="sidebar-content">
+
+        </div>
+      <footer id="sidebar-footer" class="sidebar-footer">
+        <img id="profile-image" class="sidebar-footer-pfp chat-profile-pic"/>
+        <button>Profile</button>
+      </footer>
       </div>
+
+      <!-- Chat View -->
       <div id="chat" class="chat-view">
+        <header class="message-div-header">
+          <h3>James</h3>
+        </header>
         <div id="messages" class="message-view"></div>
         <div id="input" class="message-input-div">
           <input id="type" class="type-box" type="text"></input>
-          <button id="send" class="send-button" type="submit">Send</button>
+          <button id="send" class="send-button">Send</button>
         </div>
       </div>
 
@@ -37,7 +51,6 @@
 
   </body>
 	<script src="app.js"></script>
-  <script src="login.js"></script>
 </html>
 
 
