@@ -45,6 +45,10 @@ button:hover {
     box-sizing: border-box;
 }
 
+.red-button {
+    background-color: #FF000055;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -166,7 +170,7 @@ h1, h2, h3 {
 }
 
 .chat-username {
-    color: blue;
+    color: rgb(0, 132, 255);
 }
 .chat-username:hover {
     cursor: pointer;

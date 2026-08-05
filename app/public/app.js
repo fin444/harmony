@@ -1,6 +1,6 @@
 // Socket stuff
 
-const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port)
+
 const receiveHandlers = {
     invalidToken:       function () {},
     groupList:          function (groups) {},
@@ -23,6 +23,12 @@ const sendHandlers = {
     deleteThing:    function (thingType, id) {},
     inviteUser:     function (groupId, userId) {},
 };
+
+const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port)
+
+socket.addEventListener('open', (event) => {
+  console.log('WebSocket connected');
+});
 
 socket.addEventListener("message", (event) => {
 	console.log("message from server:", event.data)
@@ -67,7 +73,7 @@ let otherUsername = "test_other"
 
 // Functions
 
-function setMessageView(chatName, groupImg, messages) {
+function setChatView(chatName, messages) {
     // document.getElementById("header-chat-name").textContent = chatName;
     // // TODO Set header image
     // messageInputField.placeholder = "Message " + chatName;
