@@ -52,6 +52,7 @@ export const handlers = {
 			return
 		}
 		addUser(num, user, socket)
+		sendGroupList(socket, user)
 	},
 
 	getGroupInfo: async function(data, num, user, socket) {
