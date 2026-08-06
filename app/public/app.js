@@ -257,6 +257,12 @@ function sendMessage() {
     }
     let messageText = messageInputFieldElm.value;
     messageInputFieldElm.value = "";
+    
+    if(messageText === "") {
+        console.log("Cannot send message. Nothing in message text field.");
+        return;
+    }
+
     console.log("Sending message in channel ", curChannelId, ": ", messageText);
 
     sendHandlers.sendMessage(curChannelId, messageText, null);
