@@ -12,7 +12,7 @@ export function addUser(num, user, socket) {
 }
 
 export function broadcast(userList, type, data) {
-	for (let num in Object.keys(users)) {
+	for (let num in users) {
 		if (userList.includes(users[num])) {
 			send(sockets[num], type, data)
 		}
