@@ -31,14 +31,30 @@ button, input {
     height: 30px;
     padding-left: 10px;
     padding-right: 10px;
-    corner-shape: superellipse(1);
+    /* corner-shape: superellipse(1); */
 }
 
 button {
-    cursor: pointer;
+  font-family: inherit;
+  color: currentColor;
+  cursor: pointer;
+  transition: filter 0.2s, box-shadow 0.2s, background-color 0.2s, transform 0.1s, text-shadow 0.2s;
+  -webkit-tap-highlight-color: transparent; /* Removes the flicker on iPad/Mobile */
+  border: 2px solid #00000018;
+  /* border-radius: 0.7rem; */
+  box-shadow: 0 2px 0.1rem 0rem #00000007;
+  
 }
 button:hover {
-    background-color: var(--button-highlight-color);
+  transform: translateY(-1.3px);
+  filter: brightness(120%);
+
+}
+button:active{
+  transform: translateY(1px);
+  box-shadow: none;
+  /* text-shadow: 0rem 0rem 2rem #ffffffd8, 0rem 0rem 4rem #ffffffd8; */
+
 }
 
 *, *::before, *::after {
@@ -98,11 +114,12 @@ h1, h2, h3 {
 }
 
 .sidebar-content-button {
-    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    /* border: 1.5px solid rgba(255, 255, 255, 0.1); */
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
 }
 .sidebar-content-button.is-selected {
-    box-shadow: inset 0px 1px 5px rgba(0, 0, 0, 0.9);
+    /* border: 2px solid rgba(255, 255, 255, 0.2); */
+    box-shadow: inset 0px 2px 50px rgba(128, 128, 128, 0.5);
 
 }
 .sidebar-content-button:hover {

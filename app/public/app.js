@@ -26,6 +26,7 @@ const receiveHandlers = {
     },
     messages:           function (channelId, messages) {
         console.log("Messages message from server");
+        console.log("Channel ID messages received in: ", channelId);
         if(curChannelId === channelId) populateMessages(messages);
     },
     typingIndicator:    function (channelId, usersTyping) {
@@ -123,7 +124,7 @@ socket.addEventListener("message", (event) => {
             receiveHandlers.typingIndicator(data.channelId, data.usersTyping);
             break;
         case "userInfo":
-            receiveHandlers.userInfo(data.id, data.name, data.pfpId);
+            receiveHandlers.userInfo(data.id, data.username, data.pfpId);
             break;
         default:
             return;
@@ -202,7 +203,12 @@ function populateChannelList(channels) {
 
 function populateMessages(messages) {
     for(let message of messages) {
-        let messageDiv = getMessageDiv(message.contents, "testUsername", ownerPfp, message.fileId);
+        let username = "Unknown user with ID: " + message.userId;
+        let userMatch = userCache.find(user => user.id === message.userId);
+        if (userMatch !== undefined) {
+            username = userMatch.name;
+        }
+        let messageDiv = getMessageDiv(message.contents, username, ownerPfp, message.fileId);
         messageAreaElm.prepend(messageDiv);
     }
 }
