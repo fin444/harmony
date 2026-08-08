@@ -5,7 +5,7 @@ import {addUser, broadcast, send} from "./websocket.js"
 export const specs = {
 	token: {token: "str"},
 	getGroupInfo: {id: "id"},
-	getMessages: {channelId: "id", index: "int"},
+	getMessages: {channelId: "id", index: "int?"},
 	typingStatus: {isTyping: "bool"},
 	sendMessage: {channelId: "id", contents: "str", fileId: "id?"},
 	getUserInfo: {username: "str"},
