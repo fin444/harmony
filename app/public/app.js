@@ -173,11 +173,14 @@ function populateGroupList(groups) {
     groupListElm.replaceChildren();   
     for(let group of groups) {
         let groupButtonElm = document.createElement("button");
-        groupButtonElm.textContent = group.name;
+        groupButtonElm.textContent = "ID: " + group.id + " " + group.name;
         groupButtonElm.className = 'sidebar-content-button';
         groupButtonElm.dataset.groupId = group.id;
         groupButtonElm.type = 'button';
         groupButtonElm.addEventListener("click", () => {
+            const groupButtons = document.querySelectorAll('.sidebar-content-button');
+            groupButtons.forEach(b => b.classList.remove('is-selected'));
+            groupButtonElm.classList.toggle('is-selected');
             const groupId = group.id;
             curGroupId = groupId;
             sendHandlers.getGroupInfo(groupId);
