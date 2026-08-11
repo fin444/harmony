@@ -101,7 +101,7 @@ export const handlers = {
 	},
 
 	getUserInfo: async function(data, num, user, socket) {
-		// TODO
+		sendUserInfo(socket, data.id)
 	},
 
 	setPfp: async function(data, num, user, socket) {
