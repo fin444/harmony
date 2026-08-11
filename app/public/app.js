@@ -27,7 +27,28 @@ const receiveHandlers = {
     messages:           function (channelId, messages) {
         console.log("Messages message from server");
         console.log("Channel ID messages received in: ", channelId);
-        if(curChannelId === channelId) populateMessages(messages);
+        if(curChannelId === channelId) {
+            for (let message of messages) {
+                eventQueue.push({
+                    message: message,
+                    requestSent: false,
+                    dataReady: function () {
+                        return userCache.find(user => user.id === this.message.userId) !== undefined;
+                    },
+                    requestData: function () {
+                        this.requestSent = true;
+                        sendHandlers.getUserInfo(this.message.userId);
+                    },
+                    execute: function () {
+                        this.requestSent = false;
+                        let userMatch = userCache.find(user => user.id === this.message.userId);
+                        let username = userMatch ? userMatch.name : "Unknown";
+                        let messageDiv = getMessageDiv(this.message.contents, username, ownerPfp, this.message.fileId);
+                        messageAreaElm.prepend(messageDiv);
+                    }
+                });
+            }
+        }
     },
     typingIndicator:    function (channelId, usersTyping) {
         console.log("Typing indicator message from server");
@@ -39,6 +60,7 @@ const receiveHandlers = {
             // Set profile pfp, etc.
         }
         userCache.push( {id: id, name: name, pfpId: pfpId} );
+        processEventQueue();
     }
 };
 
@@ -101,7 +123,6 @@ socket.addEventListener('open', () => {
 });
 
 socket.addEventListener("message", (event) => {
-	
     let data = JSON.parse(event.data);
     console.log("message from server:", data)
     switch (data.type) {
@@ -127,8 +148,9 @@ socket.addEventListener("message", (event) => {
             receiveHandlers.userInfo(data.id, data.username, data.pfpId);
             break;
         default:
-            return;
+            break;
     }
+    processEventQueue();
 });
 
 // Constants
@@ -147,6 +169,7 @@ const messageAreaElm = document.getElementById("messages");
 const newGroupButtonElm = document.getElementById("new-group");
 
 // Variables
+let eventQueue = [];
 let userCache = [];
 let curUserId = -1;
 let curGroupId = -1;
@@ -154,12 +177,25 @@ let curChannelId = -1;
 let groupList = [];
 let channelList = [];
 
+
 let ownerPfp = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOaa8Hmv8r-hqG31BpFaSI-AlPdkFTnIeLHNbKgJVTYCRsm3zMR28O8nMT&s=10";
 let ownerUsername = "test_curuser";
 let otherPfp = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOaa8Hmv8r-hqG31BpFaSI-AlPdkFTnIeLHNbKgJVTYCRsm3zMR28O8nMT&s=10";
 let otherUsername = "test_other"
 
 // Functions
+
+function processEventQueue() {
+    for (let event of eventQueue) {
+        // let event = eventQueue[i];
+        if (!event.dataReady()) {
+            if (!event.requestSent) event.requestData();
+            return;
+        }
+        event.execute();
+        eventQueue.pop(0);
+    }
+}
 
 function getFormattedDate(date) {
     return date.toLocaleTimeString('en-US', {
@@ -203,13 +239,7 @@ function populateChannelList(channels) {
 
 function populateMessages(messages) {
     for(let message of messages) {
-        let username = "Unknown user with ID: " + message.userId;
-        let userMatch = userCache.find(user => user.id === message.userId);
-        if (userMatch !== undefined) {
-            username = userMatch.name;
-        }
-        let messageDiv = getMessageDiv(message.contents, username, ownerPfp, message.fileId);
-        messageAreaElm.prepend(messageDiv);
+        
     }
 }
 
