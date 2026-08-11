@@ -16,8 +16,7 @@
 }
 
 *:focus-visible {
-    outline: 1.5px solid #fafbfb;
-    outline-style: inset;
+    outline: 1.5px solid #fafbfb42;
 }
 *:focus:not(:focus-visible) {
   outline: none;
