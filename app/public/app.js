@@ -33,7 +33,7 @@ const receiveHandlers = {
                     message: message,
                     requestSent: false,
                     dataReady: function () {
-                        return userCache.find(user => user.id === this.message.userId) !== undefined;
+                        return userCache[this.message.userId] !== undefined;
                     },
                     requestData: function () {
                         this.requestSent = true;
@@ -41,7 +41,7 @@ const receiveHandlers = {
                     },
                     execute: function () {
                         this.requestSent = false;
-                        let userMatch = userCache.find(user => user.id === this.message.userId);
+                        let userMatch = userCache[this.message.userId];
                         let username = userMatch ? userMatch.name : "Unknown";
                         let messageDiv = getMessageDiv(this.message.contents, username, ownerPfp, this.message.fileId);
                         messageAreaElm.prepend(messageDiv);
@@ -59,7 +59,7 @@ const receiveHandlers = {
         if(id === curUserId) {
             // Set profile pfp, etc.
         }
-        userCache.push( {id: id, name: name, pfpId: pfpId} );
+        userCache[id] = {id: id, name: name, pfpId: pfpId};
         processEventQueue();
     }
 };
@@ -89,8 +89,8 @@ const sendHandlers = {
         let data = {type: 'sendMessage', channelId: channelId, contents: contents, fileId: fileId};
         socket.send(JSON.stringify(data));
     },
-    getUserInfo:    function (username) {
-        let data = {type: 'getUserInfo', username: username};
+    getUserInfo:    function (id) {
+        let data = {type: 'getUserInfo', id: id};
         socket.send(JSON.stringify(data));
     },
     setPfp:         function (fileId) {
@@ -170,7 +170,7 @@ const newGroupButtonElm = document.getElementById("new-group");
 
 // Variables
 let eventQueue = [];
-let userCache = [];
+let userCache = {};
 let curUserId = -1;
 let curGroupId = -1;
 let curChannelId = -1;
