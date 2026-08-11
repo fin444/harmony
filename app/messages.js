@@ -8,7 +8,7 @@ export const specs = {
 	getMessages: {channelId: "id", index: "int?"},
 	typingStatus: {isTyping: "bool"},
 	sendMessage: {channelId: "id", contents: "str", fileId: "id?"},
-	getUserInfo: {username: "str"},
+	getUserInfo: {id: "id"},
 	setPfp: {fileId: "id"},
 	createThing: {thingType: "str", name: "str", groupId: "id?"},
 	renameThing: {thingType: "str", id: "id", name: "str"},
@@ -101,7 +101,7 @@ export const handlers = {
 	},
 
 	getUserInfo: async function(data, num, user, socket) {
-		// TODO
+		sendUserInfo(socket, data.id)
 	},
 
 	setPfp: async function(data, num, user, socket) {
