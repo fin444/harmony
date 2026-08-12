@@ -13,7 +13,7 @@ export const specs = {
 	createThing: {thingType: "str", name: "str", groupId: "id?"},
 	renameThing: {thingType: "str", id: "id", name: "str"},
 	deleteThing: {thingType: "str", id: "id"},
-	inviteUser: {groupId: "id", userId: "id"},
+	inviteUser: {groupId: "id", username: "str"},
 }
 
 function extractFields(obj, fields) {
@@ -168,6 +168,17 @@ export const handlers = {
 	},
 
 	inviteUser: async function(data, num, user, socket) {
-		// TODO
+		let invitee = await db.getUserByName(data.username)
+		if (invitee === undefined) {
+			console.log("cannot invite non-existant user", data)
+			return
+		}
+		let allowedGroups = await db.getUserGroups(user)
+		if (!allowedGroups.includes(data.groupId)) {
+			console.log("cannot invite user to group you are not in", data)
+			return
+		}
+		await db.addUserToGroup(invitee.id, data.groupId)
+		broadcast([invitee.id], "groupList", {groups: await getGroupList(invitee.id)})
 	},
 }

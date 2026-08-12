@@ -24,7 +24,8 @@ create table "user" (
 
 create table "group_user" (
 	"userId" integer not null references "user"("id"),
-	"groupId" integer not null references "group"("id")
+	"groupId" integer not null references "group"("id"),
+	constraint "prevent_dupes" unique("userId", "groupId")
 );
 
 create table "channel" (
