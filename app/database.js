@@ -35,6 +35,16 @@ export const db = {
 			[id, name]
 		)).rows[0]
 	},
+	deleteGroup: async function(id) {
+		await pool.query(`delete from "group_user" where "groupId" = $1`, [id])
+		await pool.query(
+			`delete from "message" using "channel"
+				where "message"."channelId" = "channel"."id" and "channel"."groupId" = $1`,
+			[id]
+		)
+		await pool.query(`delete from "channel" where "groupId" = $1`, [id])
+		await pool.query(`delete from "group" where "id" = $1`, [id])
+	},
 
 	// user
 	addUser: async function(username, password, pfpId) {
@@ -112,6 +122,16 @@ export const db = {
 				where "channel"."id" = $1`,
 			[id]
 		)).rows.map(obj => obj.userId)
+	},
+	getChannelGroup: async function(id) {
+		return (await pool.query(
+			`select "groupId" from "channel" where "id" = $1`,
+			[id]
+		)).rows[0].groupId
+	},
+	deleteChannel: async function(id) {
+		await pool.query(`delete from "message" where "channelId" = $1`, [id])
+		await pool.query(`delete from "channel" where "id" = $1`, [id])
 	},
 
 	// message

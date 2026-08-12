@@ -193,7 +193,26 @@ export const handlers = {
 	},
 
 	deleteThing: async function(data, num, user, socket) {
-		// TODO
+		if (data.thingType === "group") {
+			let users = await db.getGroupUsers(data.id)
+			if (!users.includes(user)) {
+				console.log("user cannot delete group because they are not in it", data)
+				return
+			}
+			await db.deleteGroup(data.id)
+			await broadcastAdaptive(users, "groupList", async function(userId) {
+				return {groups: await getGroupList(userId)}
+			})
+		} else if (data.thingType === "channel") {
+			let users = await db.getChannelUsers(data.id)
+			if (!users.includes(user)) {
+				console.log("user cannot delete channel because they are not in it", data)
+				return
+			}
+			let group = await db.getChannelGroup(data.id)
+			await db.deleteChannel(data.id)
+			await broadcastGroupInfo(group)
+		}
 	},
 
 	inviteUser: async function(data, num, user, socket) {
