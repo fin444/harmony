@@ -61,7 +61,15 @@ export const handlers = {
 	},
 
 	getGroupInfo: async function(data, num, user, socket) {
-		// TODO
+		let groups = (await db.getUserGroups(user)).map(obj => obj.groupId)
+		if (groups.includes(data.id)) {
+			send(socket, "groupInfo", {
+				id: data.id,
+				channels: extractFields(await db.getGroupChannels(data.id), ["id", "name"])
+			})
+		} else {
+			console.log("can't send group info because user is not in group", data)
+		}
 	},
 
 	getMessages: async function(data, num, user, socket) {
