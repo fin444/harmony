@@ -1,6 +1,6 @@
 import {tokenUser} from "./account.js"
 import {db} from "./database.js"
-import {addUser, broadcast, send} from "./websocket.js"
+import {addUser, broadcast, broadcastAdaptive, send} from "./websocket.js"
 
 export const specs = {
 	token: {token: "str"},
@@ -142,7 +142,25 @@ export const handlers = {
 	},
 
 	renameThing: async function(data, num, user, socket) {
-		// TODO
+		if (data.thingType === "group") {
+			let users = await db.getGroupUsers(data.id)
+			if (users.includes(user)) {
+				await db.renameGroup(data.id, data.name)
+				await broadcastAdaptive(users, "groupList", async function(userId) {
+					return {groups: await getGroupList(userId)}
+				})
+			} else {
+				console.log("user cannot rename group because they are not in it", data)
+			}
+		} else if (data.thingType === "channel") {
+			let users = await db.getChannelUsers(data.id)
+			if (users.includes(user)) {
+				let channel = await db.renameChannel(data.id, data.name)
+				await broadcastGroupInfo(channel.groupId)
+			} else {
+				console.log("user cannot rename channel because they are not in it", data)
+			}
+		}
 	},
 
 	deleteThing: async function(data, num, user, socket) {

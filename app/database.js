@@ -29,6 +29,12 @@ export const db = {
 			[name]
 		)).rows[0]
 	},
+	renameGroup: async function(id, name) {
+		return (await pool.query(
+			`update "group" set "name" = $2 where "id" = $1 returning *`,
+			[id, name]
+		)).rows[0]
+	},
 
 	// user
 	addUser: async function(username, password, pfpId) {
@@ -85,6 +91,12 @@ export const db = {
 			`insert into "channel"("name", "groupId")
 				values($1, $2) returning *`,
 			[name, groupId]
+		)).rows[0]
+	},
+	renameChannel: async function(id, name) {
+		return (await pool.query(
+			`update "channel" set "name" = $2 where "id" = $1 returning *`,
+			[id, name]
 		)).rows[0]
 	},
 	getGroupChannels: async function(group) {
