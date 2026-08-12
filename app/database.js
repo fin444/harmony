@@ -68,7 +68,7 @@ export const db = {
 		)).rows
 	},
 	getUserGroups: async function(id) {
-		return (await getUserGroupsFull(id)).map(obj => obj.groupId)
+		return (await this.getUserGroupsFull(id)).map(obj => obj.groupId)
 	},
 	getGroupUsers: async function(id) {
 		return (await pool.query(
