@@ -1,6 +1,6 @@
 import {tokenUser, tryLogin, trySignup} from "./account.js"
 
-async function handleLogin(query, res, fn) {
+async function handleLogin(query, res, fn, errText) {
 	if (typeof query.username !== "string" || typeof query.password !== "string") {
 		res.statusCode = 400
 		res.send("Bad request")
@@ -10,7 +10,7 @@ async function handleLogin(query, res, fn) {
 	let token = await fn(query.username, query.password)
 	if (token === null) {
 		res.statusCode = 401
-		res.send("Invalid login")
+		res.send(errText)
 	} else {
 		res.send(token)
 	}
@@ -35,8 +35,8 @@ function validateToken(token, res) {
 export function initHTTP(app) {
 	app.get("/", (req, res) => res.sendFile(import.meta.dirname + "/public/login.html"))
 
-	app.get("/login", (req, res) => handleLogin(req.query, res, tryLogin))
-	app.get("/signup", (req, res) => handleLogin(req.query, res, trySignup))
+	app.get("/login", (req, res) => handleLogin(req.query, res, tryLogin, "Invalid credential(s)"))
+	app.get("/signup", (req, res) => handleLogin(req.query, res, trySignup, "Account already exists"))
 
 	app.get("/app", (req, res) => {
 		if (validateToken(req.query.token, res)) {

@@ -1,17 +1,61 @@
-<script>
-const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port)
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Disclone</title>
+    <style>
+      * {
+        /* border: 1px solid red; */
+        
+      }
+      input {
+        margin: 0px;
+        height: 30px;
+      }
+    </style>
+	<link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+    
+    <!-- App Body -->
+    <div id="app" class="app-view">
 
-socket.addEventListener("open", (event) => {
-	console.log("socket opened")
-	send({type: "token", token: (new URLSearchParams(window.location.search)).get("token")})
-})
+      <!-- Sidebar -->
+      <div id="sidebar" class="sidebar-view">
 
-socket.addEventListener("message", (event) => {
-	console.log("message from server:", JSON.parse(event.data))
-})
+        <header id="sidebar-title" class="sidebar-title"><h2>Disclone</h2></header>
+        <div id="new-group-div" style="margin-left:10px;"><button id="new-group">+ New Group</button></div>
 
-function send(data) {
-	socket.send(JSON.stringify(data))
-}
+        <form id="group-list" class="sidebar-content">
+          
+        </form>
+      <footer id="sidebar-footer" class="sidebar-footer">
+        <img id="profile-image" class="sidebar-footer-pfp chat-profile-pic"/>
+        <!-- <button id="profile-button">Profile</button> -->
+        <button id="sign-out-button" class="red-button">Sign out</button>
+      </footer>
+      </div>
 
-</script>
+      <!-- Chat View -->
+      <div id="chat" class="chat-view">
+        <!-- Chat Header -->
+        <header class="message-div-header">
+          <h3 id="group-header-text"></h3>
+        </header>
+        <div id="messages" class="message-view"></div>
+        <div id="input" class="message-input-div">
+          <button id="attach" class="attach-button">+</button>
+          <input id="type" placeholder="Message" class="type-box" type="text"></input>
+          <button id="send" class="send-button">Send</button>
+        </div>
+      </div>
+
+    </div>
+    
+
+  </body>
+	<script src="app.js"></script>
+</html>
+
+
