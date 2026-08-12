@@ -59,7 +59,7 @@ export const db = {
 			[userId, groupId]
 		)).rows[0]
 	},
-	getUserGroups: async function(id) {
+	getUserGroupsFull: async function(id) {
 		return (await pool.query(
 			`select * from "group_user"
 				inner join "group" on "group_user"."groupId" = "group"."id"
@@ -67,13 +67,16 @@ export const db = {
 			[id]
 		)).rows
 	},
+	getUserGroups: async function(id) {
+		return (await getUserGroupsFull(id)).map(obj => obj.groupId)
+	},
 	getGroupUsers: async function(id) {
 		return (await pool.query(
 			`select * from "group_user"
 				inner join "user" on "group_user"."userId" = "user"."id"
 				where "group_user"."groupId" = $1`,
 			[id]
-		)).rows
+		)).rows.map(obj => obj.userId)
 	},
 
 	// channel
@@ -96,7 +99,7 @@ export const db = {
 				inner join "channel" on "group_user"."groupId" = "channel"."groupId"
 				where "channel"."id" = $1`,
 			[id]
-		)).rows
+		)).rows.map(obj => obj.userId)
 	},
 
 	// message

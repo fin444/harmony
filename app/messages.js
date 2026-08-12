@@ -30,13 +30,16 @@ function extractFields(obj, fields) {
 async function sendUserInfo(socket, user) {
 	send(socket, "userInfo", extractFields(await db.getUser(user), ["id", "username", "pfpId"]))
 }
-async function sendGroupList(socket, user) {
-	send(socket, "groupList", {
-		groups: extractFields(await db.getUserGroups(user), ["id", "name"])
-	})
+
+async function getGroupList(user) {
+	return extractFields(await db.getUserGroupsFull(user), ["id", "name"])
 }
+async function sendGroupList(socket, user) {
+	send(socket, "groupList", {groups: await getGroupList(user)})
+}
+
 async function broadcastGroupInfo(group) {
-	let users = (await db.getGroupUsers(group)).map(obj => obj.userId)
+	let users = await db.getGroupUsers(group)
 	broadcast(users, "groupInfo", {
 		id: group,
 		channels: extractFields(await db.getGroupChannels(group), ["id", "name"])
@@ -61,7 +64,7 @@ export const handlers = {
 	},
 
 	getGroupInfo: async function(data, num, user, socket) {
-		let groups = (await db.getUserGroups(user)).map(obj => obj.groupId)
+		let groups = await db.getUserGroups(user)
 		if (groups.includes(data.id)) {
 			send(socket, "groupInfo", {
 				id: data.id,
@@ -81,7 +84,7 @@ export const handlers = {
 	},
 
 	sendMessage: async function(data, num, user, socket) {
-		let users = (await db.getChannelUsers(data.channelId)).map((o) => {return o.userId})
+		let users = await db.getChannelUsers(data.channelId)
 		if (!users.includes(user)) {
 			console.log("can't send message because user is not in channel", data)
 			return
@@ -126,7 +129,7 @@ export const handlers = {
 				console.log("thingType is channel but groupId is null", data)
 				return
 			}
-			let groups = (await db.getUserGroups(user)).map(obj => obj.groupId)
+			let groups = await db.getUserGroups(user)
 			if (groups.includes(data.groupId)) {
 				await db.addChannel(data.name, data.groupId)
 				broadcastGroupInfo(data.groupId)
