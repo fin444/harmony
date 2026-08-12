@@ -67,6 +67,14 @@ export const db = {
 			[id]
 		)).rows
 	},
+	getGroupUsers: async function(id) {
+		return (await pool.query(
+			`select * from "group_user"
+				inner join "user" on "group_user"."userId" = "user"."id"
+				where "group_user"."groupId" = $1`,
+			[id]
+		)).rows
+	},
 
 	// channel
 	addChannel: async function(name, groupId) {

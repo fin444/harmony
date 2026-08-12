@@ -35,9 +35,9 @@ async function sendGroupList(socket, user) {
 		groups: extractFields(await db.getUserGroups(user), ["id", "name"])
 	})
 }
-async function sendGroupInfo(socket, group) {
-	// TODO broadcast instead of send
-	send(socket, "groupInfo", {
+async function broadcastGroupInfo(group) {
+	let users = (await db.getGroupUsers(group)).map(obj => obj.userId)
+	broadcast(users, "groupInfo", {
 		id: group,
 		channels: extractFields(await db.getGroupChannels(group), ["id", "name"])
 	})
@@ -121,7 +121,7 @@ export const handlers = {
 			let groups = (await db.getUserGroups(user)).map(obj => obj.groupId)
 			if (groups.includes(data.groupId)) {
 				await db.addChannel(data.name, data.groupId)
-				sendGroupInfo(socket, data.groupId)
+				broadcastGroupInfo(data.groupId)
 			} else {
 				console.log("user cannot add channel to group because they are not in it", data)
 			}
