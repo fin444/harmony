@@ -1,6 +1,11 @@
 <script>
 const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port)
 
+socket.addEventListener("open", (event) => {
+	console.log("socket opened")
+	send({type: "token", token: (new URLSearchParams(window.location.search)).get("token")})
+})
+
 socket.addEventListener("message", (event) => {
 	console.log("message from server:", JSON.parse(event.data))
 })
@@ -8,4 +13,5 @@ socket.addEventListener("message", (event) => {
 function send(data) {
 	socket.send(JSON.stringify(data))
 }
+
 </script>
