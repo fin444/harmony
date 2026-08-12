@@ -6,7 +6,7 @@ export const specs = {
 	token: {token: "str"},
 	getGroupInfo: {id: "id"},
 	getMessages: {channelId: "id", index: "int?"},
-	typingStatus: {isTyping: "bool"},
+	typingStatus: {channelId: "id", isTyping: "bool"},
 	sendMessage: {channelId: "id", contents: "str", fileId: "id?"},
 	getUserInfo: {id: "id"},
 	setPfp: {fileId: "id"},
@@ -15,6 +15,8 @@ export const specs = {
 	deleteThing: {thingType: "str", id: "id"},
 	inviteUser: {groupId: "id", username: "str"},
 }
+
+const typingStatuses = {}
 
 function extractFields(obj, fields) {
 	if (Array.isArray(obj)) {
@@ -66,10 +68,21 @@ export const handlers = {
 	getGroupInfo: async function(data, num, user, socket) {
 		let groups = await db.getUserGroups(user)
 		if (groups.includes(data.id)) {
+			let channels = await db.getGroupChannels(data.id)
 			send(socket, "groupInfo", {
 				id: data.id,
-				channels: extractFields(await db.getGroupChannels(data.id), ["id", "name"])
+				channels: extractFields(channels, ["id", "name"])
 			})
+			// if they are asking for group info they might not have latest typingIndicators
+			for (let channel of channels) {
+				let status = typingStatuses[channel.id]
+				if (status !== undefined && status.size !== 0) {
+					send(socket, "typingIndicator", {
+						channelId: channel.id,
+						usersTyping: Array.from(status)
+					})
+				}
+			}
 		} else {
 			console.log("can't send group info because user is not in group", data)
 		}
@@ -80,7 +93,23 @@ export const handlers = {
 	},
 
 	typingStatus: async function(data, num, user, socket) {
-		// TODO
+		let users = await db.getChannelUsers(data.channelId)
+		if (!users.includes(user)) {
+			console.log("can't set typing status because user is not in channel", data)
+			return
+		}
+		if (!(data.channelId in typingStatuses)) {
+			typingStatuses[data.channelId] = new Set()
+		}
+		if (data.isTyping) {
+			typingStatuses[data.channelId].add(user)
+		} else {
+			typingStatuses[data.channelId].delete(user)
+		}
+		broadcast(users, "typingIndicator", {
+			channelId: data.channelId,
+			usersTyping: Array.from(typingStatuses[data.channelId])
+		})
 	},
 
 	sendMessage: async function(data, num, user, socket) {
