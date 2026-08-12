@@ -153,4 +153,14 @@ export const db = {
 			[id]
 		)).rows[0].index
 	},
+	getMessages: async function(channelId, index, count) {
+		return (await pool.query(
+			`select * from (
+				select *, row_number() over(order by "timestamp") "index" from "message"
+					where "channelId" = $1
+			) "query" where "query"."index" <= $2
+				order by "query"."index" desc limit $3`,
+			[channelId, index === null || index === undefined ? Number.MAX_SAFE_INTEGER : index, count]
+		)).rows
+	}
 }

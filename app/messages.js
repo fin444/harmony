@@ -89,7 +89,15 @@ export const handlers = {
 	},
 
 	getMessages: async function(data, num, user, socket) {
-		// TODO
+		let users = await db.getChannelUsers(data.channelId)
+		if (!users.includes(user)) {
+			console.log("can't get messages because user is not in channel", data)
+			return
+		}
+		send(socket, "messages", {
+			channelId: data.channelId,
+			messages: await db.getMessages(data.channelId, data.index, 30)
+		})
 	},
 
 	typingStatus: async function(data, num, user, socket) {
