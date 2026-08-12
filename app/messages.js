@@ -59,8 +59,8 @@ export const handlers = {
 		}
 		addUser(num, user, socket)
 		send(socket, "validToken", {userId: user})
-		sendUserInfo(socket, user)
-		sendGroupList(socket, user)
+		await sendUserInfo(socket, user)
+		await sendGroupList(socket, user)
 	},
 
 	getGroupInfo: async function(data, num, user, socket) {
@@ -112,7 +112,7 @@ export const handlers = {
 	},
 
 	getUserInfo: async function(data, num, user, socket) {
-		sendUserInfo(socket, data.id)
+		await sendUserInfo(socket, data.id)
 	},
 
 	setPfp: async function(data, num, user, socket) {
@@ -123,7 +123,7 @@ export const handlers = {
 		if (data.thingType === "group") {
 			let group = await db.addGroup(data.name)
 			await db.addUserToGroup(user, group.id)
-			sendGroupList(socket, user)
+			await sendGroupList(socket, user)
 		} else if (data.thingType === "channel") {
 			if (data.groupId === null || data.groupId === undefined) {
 				console.log("thingType is channel but groupId is null", data)
@@ -132,7 +132,7 @@ export const handlers = {
 			let groups = await db.getUserGroups(user)
 			if (groups.includes(data.groupId)) {
 				await db.addChannel(data.name, data.groupId)
-				broadcastGroupInfo(data.groupId)
+				await broadcastGroupInfo(data.groupId)
 			} else {
 				console.log("user cannot add channel to group because they are not in it", data)
 			}
