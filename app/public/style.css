@@ -115,6 +115,7 @@ h1, h2, h3 {
 
 .group-button {
     /* border: 1.5px solid rgba(255, 255, 255, 0.1); */
+    text-align: left;
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
 }
 .group-button.is-selected {
@@ -126,19 +127,19 @@ h1, h2, h3 {
     /* color: blue; */
 }
 
+
 .channel-list {
-    margin: 10px;
+    margin-left: 20px;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     align-items: left;
     gap: 10px;
 }
-
-
 .channel-button {
     /* border: 1.5px solid rgba(255, 255, 255, 0.1); */
-    height: 30px;
+    text-align: left;
+    height: 25px;
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
 }
 .channel-button.is-selected {
