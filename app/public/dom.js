@@ -18,17 +18,18 @@ export function populateGroupList(groups) {
     for(let group of groups) {
         let groupButtonElm = document.createElement("button");
 
-        groupButtonElm.textContent = "ID: " + group.id + " " + group.name;
+        groupButtonElm.textContent = "Group " + group.id + ": " + group.name;
         groupButtonElm.className = 'group-button';
         groupButtonElm.dataset.groupId = group.id;
         groupButtonElm.type = 'button';
 
         groupButtonElm.addEventListener("click", () => {
+            let groupId = parseInt(groupButtonElm.dataset.groupId);
             const groupButtons = document.querySelectorAll('.group-button');
             groupButtons.forEach(b => b.classList.remove('is-selected'));
             groupButtonElm.classList.toggle('is-selected');
-            setGroupId(groupButtonElm.dataset.groupId);
-            sendHandlers.getGroupInfo(groupButtonElm.dataset.groupId);
+            setGroupId(groupId);
+            sendHandlers.getGroupInfo(groupId);
         });
         element.groupList.append(groupButtonElm);
     }
@@ -39,40 +40,42 @@ export function prependMessage(elm) {
 }
 
 export function populateChannelList(channels, groupId) {
-    let channelList = document.createElement("form");
-    channelList.style = "channel-list";
+    let channelList = document.createElement("div");
+    channelList.className = "channel-list";
 
     // Find the group button with matching id
     const groupButton = document.querySelector(`[data-group-id="${groupId}"]`);
     
     // Clear any existing channel list from this group button
-    const existingChannelList = groupButton.querySelector("form");
+    const existingChannelList = groupButton.querySelector(".channel-list");
     if (existingChannelList) {
         existingChannelList.remove();
     }
     
     for(let channel of channels) {
         let channelButtonElm = document.createElement("button");
-        channelButtonElm.textContent = channel.name;
-        channelButtonElm.className = 'group-button';
+        channelButtonElm.textContent = '# '+ channel.name;
+        channelButtonElm.className = 'channel-button';
+        channelButtonElm.type = 'button';
         channelButtonElm.dataset.channelId = channel.id;
         channelButtonElm.addEventListener("click", () => {
-            const channelButtons = document.querySelectorAll('.group-button');
+            const channelButtons = document.querySelectorAll('.channel-button');
+            let channelId = parseInt(channelButtonElm.dataset.channelId);
             channelButtons.forEach(b => b.classList.remove('is-selected'));
             channelButtonElm.classList.toggle('is-selected');
-            setChannelId(channel.id);
+            setChannelId(channelId);
             clearMessages();
-            sendHandlers.getMessages(channel.id, 30);
+            sendHandlers.getMessages(channelId, null);
         });
         channelList.append(channelButtonElm);
     }
     
     // Append the channel list to the group button
-    groupButton.append(channelList);
+    groupButton.after(channelList);
 }
 
 export function clearMessages() {
-    messageAreaElm.replaceChildren();
+    element.messageArea.replaceChildren();
 }
 
 export function getMessageDiv(message, username, pfpUrl, timestamp, file) {
