@@ -49,12 +49,15 @@ export function addMessageToQueue(message){
 
 
 export function processMessageQueue() {
-    for (let event of messageQueue) {
+    console.log("Message queue before:", messageQueue);
+    while (messageQueue.length > 0) {
+        let event = messageQueue[0];
         if (!event.dataReady()) {
             if (!event.requestSent) event.requestData();
             return;
         }
         event.execute();
-        messageQueue.pop(0);
+        messageQueue.shift();
     }
+     console.log("Message queue after:", messageQueue);
 }
