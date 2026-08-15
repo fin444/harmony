@@ -1,4 +1,4 @@
-import { getMessageDiv, prependMessage } from "./dom.js";
+import { appendMessage, getMessageDiv, prependMessage } from "./dom.js";
 import { ownerPfp } from "./app.js";
 import { sendHandlers } from "./socket.js";
 
@@ -41,7 +41,7 @@ export function addMessageToQueue(message){
             this.requestSent = false;
             let userMatch = userCache[this.message.userId];
             let username = userMatch ? userMatch.name : "Unknown";
-            let messageDiv = getMessageDiv(this.message.contents, username, ownerPfp, this.message.fileId);
+            let messageDiv = getMessageDiv(this.message.contents, username, ownerPfp, this.message.timestamp, this.message.fileId);
             prependMessage(messageDiv);
         }
     });

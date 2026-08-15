@@ -35,6 +35,10 @@ export function populateGroupList(groups) {
     }
 }
 
+export function appendMessage(elm) {
+    element.messageArea.append(elm);
+}
+
 export function prependMessage(elm) {
     element.messageArea.prepend(elm);
 }

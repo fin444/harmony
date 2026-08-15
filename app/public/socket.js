@@ -26,8 +26,9 @@ const receiveHandlers = {
     messages:           function (channelId, messages) {
         console.log("Messages message from server");
         console.log("Channel ID messages received in: ", channelId);
+        let reversedMessages = messages.toReversed();
         if(session.channelId === channelId) {
-            for (let message of messages) {
+            for (let message of reversedMessages) {
                 addMessageToQueue(message);
             }
         }
