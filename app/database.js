@@ -29,6 +29,22 @@ export const db = {
 			[name]
 		)).rows[0]
 	},
+	renameGroup: async function(id, name) {
+		return (await pool.query(
+			`update "group" set "name" = $2 where "id" = $1 returning *`,
+			[id, name]
+		)).rows[0]
+	},
+	deleteGroup: async function(id) {
+		await pool.query(`delete from "group_user" where "groupId" = $1`, [id])
+		await pool.query(
+			`delete from "message" using "channel"
+				where "message"."channelId" = "channel"."id" and "channel"."groupId" = $1`,
+			[id]
+		)
+		await pool.query(`delete from "channel" where "groupId" = $1`, [id])
+		await pool.query(`delete from "group" where "id" = $1`, [id])
+	},
 
 	// user
 	addUser: async function(username, password, pfpId) {
@@ -59,13 +75,24 @@ export const db = {
 			[userId, groupId]
 		)).rows[0]
 	},
-	getUserGroups: async function(id) {
+	getUserGroupsFull: async function(id) {
 		return (await pool.query(
 			`select * from "group_user"
 				inner join "group" on "group_user"."groupId" = "group"."id"
 				where "group_user"."userId" = $1`,
 			[id]
 		)).rows
+	},
+	getUserGroups: async function(id) {
+		return (await this.getUserGroupsFull(id)).map(obj => obj.groupId)
+	},
+	getGroupUsers: async function(id) {
+		return (await pool.query(
+			`select * from "group_user"
+				inner join "user" on "group_user"."userId" = "user"."id"
+				where "group_user"."groupId" = $1`,
+			[id]
+		)).rows.map(obj => obj.userId)
 	},
 
 	// channel
@@ -74,6 +101,12 @@ export const db = {
 			`insert into "channel"("name", "groupId")
 				values($1, $2) returning *`,
 			[name, groupId]
+		)).rows[0]
+	},
+	renameChannel: async function(id, name) {
+		return (await pool.query(
+			`update "channel" set "name" = $2 where "id" = $1 returning *`,
+			[id, name]
 		)).rows[0]
 	},
 	getGroupChannels: async function(group) {
@@ -88,7 +121,17 @@ export const db = {
 				inner join "channel" on "group_user"."groupId" = "channel"."groupId"
 				where "channel"."id" = $1`,
 			[id]
-		)).rows
+		)).rows.map(obj => obj.userId)
+	},
+	getChannelGroup: async function(id) {
+		return (await pool.query(
+			`select "groupId" from "channel" where "id" = $1`,
+			[id]
+		)).rows[0].groupId
+	},
+	deleteChannel: async function(id) {
+		await pool.query(`delete from "message" where "channelId" = $1`, [id])
+		await pool.query(`delete from "channel" where "id" = $1`, [id])
 	},
 
 	// message
@@ -110,4 +153,14 @@ export const db = {
 			[id]
 		)).rows[0].index
 	},
+	getMessages: async function(channelId, index, count) {
+		return (await pool.query(
+			`select * from (
+				select *, row_number() over(order by "timestamp") "index" from "message"
+					where "channelId" = $1
+			) "query" where "query"."index" <= $2
+				order by "query"."index" desc limit $3`,
+			[channelId, index === null || index === undefined ? Number.MAX_SAFE_INTEGER : index, count]
+		)).rows
+	}
 }
