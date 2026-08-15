@@ -17,11 +17,10 @@ const receiveHandlers = {
         console.log("Group list message from server");
         populateGroupList(groups);
     },
-    groupInfo:          function (id, channels) {
-        console.log("Group info message from server");
-        if(id === session.groupId) {
-            console.log("got here 1");
-            populateChannelList(channels, id);
+    groupInfo:          function (groupId, channels) {
+        console.log("Group info message from server. Server Group ID = ", groupId, " Session Group ID = ", session.groupId);
+        if(session.groupId === groupId) {
+            populateChannelList(channels, groupId);
         }
     },
     messages:           function (channelId, messages) {
@@ -51,10 +50,9 @@ export const sendHandlers = {
     getGroupInfo:   function (id) {
         let data = {type: 'getGroupInfo', id: id};
         socket.send(JSON.stringify(data));
-        setChannelId(1); // Baked in test
+        // setChannelId(1); // Baked in test
         console.log("Current group set to ", session.curGroupId);
         console.log("Channel ID set", session.channelId);
-        sendHandlers.getMessages(session.channelId, -1);
     },
     getMessages:    function (channelId, index) {
         let data = {type: 'getMessages', channelId: channelId, index: index};
