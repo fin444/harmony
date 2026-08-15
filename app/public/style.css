@@ -130,7 +130,7 @@ h1, h2, h3 {
 
 .channel-list {
     margin-left: 20px;
-    flex-grow: 1;
+    flex-grow: 0;
     display: flex;
     flex-direction: column;
     align-items: left;

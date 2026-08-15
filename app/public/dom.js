@@ -47,7 +47,7 @@ export function populateChannelList(channels, groupId) {
     const groupButton = document.querySelector(`[data-group-id="${groupId}"]`);
     
     // Clear any existing channel list from this group button
-    const existingChannelList = groupButton.querySelector(".channel-list");
+    const existingChannelList = document.querySelector(".channel-list");
     if (existingChannelList) {
         existingChannelList.remove();
     }
