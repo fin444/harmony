@@ -159,7 +159,7 @@ export const db = {
 				select *, row_number() over(order by "timestamp") "index" from "message"
 					where "channelId" = $1
 			) "query" where "query"."index" <= $2
-				order by "query"."index" desc limit $3`,
+				order by "query"."index" asc limit $3`,
 			[channelId, index === null || index === undefined ? Number.MAX_SAFE_INTEGER : index, count]
 		)).rows
 	}
