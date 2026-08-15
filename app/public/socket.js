@@ -1,4 +1,6 @@
-import {userSession, userCache, populateGroupList, processMessageQueue, initializePage, addMessageToQueue} from "./app.js";
+import { initializePage } from "./app.js";
+import { session, userCache, addMessageToQueue, processMessageQueue, setGroupId, setChannelId } from "./session.js";
+import { populateGroupList } from "./dom.js";
 
 const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
 
@@ -8,7 +10,7 @@ const receiveHandlers = {
     },
     validToken:         function (userId) {
         console.log("Valid token message from server");
-        userSession.curUserId = userId;
+        session.curUserId = userId;
         initializePage();
     },
     groupList:          function (groups) {
@@ -17,14 +19,14 @@ const receiveHandlers = {
     },
     groupInfo:          function (id, channels) {
         console.log("Group info message from server");
-        if(userSession.curGroupId === id) {
+        if(session.curGroupId === id) {
             populateChannelList(channels);
         }
     },
     messages:           function (channelId, messages) {
         console.log("Messages message from server");
         console.log("Channel ID messages received in: ", channelId);
-        if(userSession.curChannelId === channelId) {
+        if(session.channelId === channelId) {
             for (let message of messages) {
                 addMessageToQueue(message);
             }
@@ -32,7 +34,7 @@ const receiveHandlers = {
     },
     typingIndicator:    function (channelId, usersTyping) {
         console.log("Typing indicator message from server");
-        if(userSession.curChannelId === channelId) displayTypingIndicator(usersTyping);
+        if(session.channelId === channelId) displayTypingIndicator(usersTyping);
     },
     userInfo:           function (id, name, pfpId) {
         console.log("User info message from server");
@@ -48,10 +50,10 @@ export const sendHandlers = {
     getGroupInfo:   function (id) {
         let data = {type: 'getGroupInfo', id: id};
         socket.send(JSON.stringify(data));
-        userSession.curChannelId = 1; // Baked in test
-        console.log("Current group set to ", userSession.curGroupId);
-        console.log("Channel ID set", userSession.curChannelId);
-        sendHandlers.getMessages(userSession.curChannelId, -1);
+        setChannelId(1); // Baked in test
+        console.log("Current group set to ", session.curGroupId);
+        console.log("Channel ID set", session.channelId);
+        sendHandlers.getMessages(session.channelId, -1);
     },
     getMessages:    function (channelId, index) {
         let data = {type: 'getMessages', channelId: channelId, index: index};
