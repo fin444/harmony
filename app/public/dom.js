@@ -4,6 +4,7 @@ import { sendHandlers } from "./socket.js";
 export const element = {
     groupList : document.getElementById("group-list"),
     userPfp : document.getElementById("profile-image"),
+    signoutButton : document.getElementById("sign-out"),
 
     groupHeaderTitle : document.getElementById("group-header-text"),
     messageInputField : document.getElementById("type"),

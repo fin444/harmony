@@ -28,6 +28,12 @@ function createGroup(name) {
 }
 
 
+function signout() {
+    window.location.href = "/";
+    // Clear token
+
+}
+
 
 
 export function sendMessage() {
@@ -55,6 +61,7 @@ export function initializePage () {
     setPfp(ownerPfp);
     element.newGroupButton.addEventListener("click", () => createGroup("test"));
     element.messageSendButton.addEventListener("click", () => sendMessage());
+    element.signoutButton.addEventListener("click", () => {signout()});
     element.messageInputField.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
             sendMessage();
