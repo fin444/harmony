@@ -33,8 +33,6 @@ function validateToken(token, res) {
 }
 
 export function initHTTP(app) {
-	app.get("/", (req, res) => res.sendFile(import.meta.dirname + "/public/login.html"))
-
 	app.get("/login", (req, res) => handleLogin(req.query, res, tryLogin, "Invalid credential(s)"))
 	app.get("/signup", (req, res) => handleLogin(req.query, res, trySignup, "Account already exists"))
 
