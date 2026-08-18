@@ -4,6 +4,7 @@
     
 
     --bg-primary: #f5f5f5;
+    --bg-secondary: #d3d3d3;
     --text-primary: #121212;
     --elm-highlight-color: rgb(from var(--text-primary) r g b / 0.1);
     --button-highlight-color: rgb(from var(--text-primary) r g b / 0.4);
@@ -25,12 +26,12 @@
 
 button, input {
     background-color: var(--elm-highlight-color);
-    border-radius: 500px;
+    border-radius: 10px;
     border-style: none;
     height: 30px;
     padding-left: 10px;
     padding-right: 10px;
-    /* corner-shape: superellipse(1); */
+    corner-shape: superellipse(1);
 }
 
 button {
@@ -95,13 +96,18 @@ h1, h2, h3 {
 }
 
 .sidebar-view {
+    z-index: 2;
     display: flex;
     flex-direction: column;
-    background-color: rgb(from var(--text-primary) r g b / 0.07);
+    background-color: var(--bg-secondary);
     width: 20%;
     min-width: 175px;
-    /* box-shadow: 0px 3px red; */
-    /* border: 2px solid rgb(255, 0, 0); */
+}
+
+
+
+.new-group-button {
+    anchor-name: --new-group-button;
 }
 .group-list {
     margin: 10px;
@@ -111,20 +117,31 @@ h1, h2, h3 {
     align-items: left;
     gap: 10px;
 }
-
-
 .group-button {
-    /* border: 1.5px solid rgba(255, 255, 255, 0.1); */
+    anchor-name: --group-button;
     text-align: left;
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
 }
 .group-button.is-selected {
-    /* border: 2px solid rgba(255, 255, 255, 0.2); */
     box-shadow: inset 0px 2px 50px rgba(128, 128, 128, 0.5);
 
 }
 .group-button:hover {
     /* color: blue; */
+}
+.new-group-popover {
+    display: flex;
+    padding: 10px;
+    margin-left: 10px;
+    z-index: 10;
+    position: absolute;
+    position-anchor: --new-group-button;
+    top: anchor(top);
+    left: anchor(right);
+    background-color: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.109);
+    border-radius: 50px;
+    box-shadow: 0px 2px 50px rgba(0, 0, 0, 0.5);
 }
 
 
@@ -137,13 +154,12 @@ h1, h2, h3 {
     gap: 10px;
 }
 .channel-button {
-    /* border: 1.5px solid rgba(255, 255, 255, 0.1); */
+    anchor-name: --group-button;
     text-align: left;
     height: 25px;
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
 }
 .channel-button.is-selected {
-    /* border: 2px solid rgba(255, 255, 255, 0.2); */
     box-shadow: inset 0px 2px 50px rgba(128, 128, 128, 0.5);
 
 }
@@ -163,11 +179,22 @@ h1, h2, h3 {
     margin-left: 10px;
 }
 
+
+
+.obscure {
+    position: fixed;
+    inset: 0;
+    z-index: 9;
+    background-color: rgba(0, 0, 0, 0.46);
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
 /* --- CHAT VIEW & MESSAGE VIEW UPDATES --- */
 
 .chat-view {
     width: 80%;
-    /* border: 2px solid rgb(0, 255, 4); */
     
     /* Layout children vertically */
     display: flex;
@@ -177,7 +204,6 @@ h1, h2, h3 {
 .message-view {
     display: flex;
     flex-direction: column-reverse;
-    /* border: 2px solid purple; */
     flex: 1; 
     overflow-y: auto; 
     flex-wrap: none;
@@ -258,10 +284,15 @@ table {
 }
 
 
+.hidden {
+  display: none;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     /* Overwrite variables with Dark Mode Colors */
     --bg-primary: #121212;
+    --bg-secondary: #222222;
     --text-primary: #f5f5f5;
     --accent-color: #60a5fa;
   }
