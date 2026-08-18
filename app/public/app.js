@@ -63,10 +63,13 @@ export function initializePage () {
     console.log("Initializing page");
     setPfp(ownerPfp);
     element.messageArea.addEventListener("scroll", () => {
-        if (element.messageArea.scrollTop <= 0) {
+        let container = element.messageArea;
+        const maxScrollUp = container.scrollHeight - container.clientHeight;
+        if (Math.abs(container.scrollTop) >= maxScrollUp - 1) {
             console.log("Scrolled to top! Loading more messages!");
             loadSomeOlderMessages();
         }
+        
     });
     element.messageInputDiv.classList.add("hidden");
     element.newGroupButton.addEventListener("click", () => createGroup("test"));
