@@ -1,12 +1,14 @@
-import { appendMessage, getMessageDiv, prependMessage } from "./dom.js";
+import { appendMessage, getMessageDiv, prependMessage, sortMessages } from "./dom.js";
 import { ownerPfp } from "./app.js";
 import { sendHandlers } from "./socket.js";
 
 export const session = {
     userId: -1,
     groupId: -1,
-    channelId: -1
+    channelId: -1,
+    oldestMessageIndex: -1
 };
+
 
 export let messageQueue = [];
 export let userCache = {};
@@ -26,6 +28,10 @@ export function setChannelId(id) {
     session.channelId = id;
 }
 
+export function resetOldestMessageIndex(){
+    session.oldestMessageIndex = -1;
+}
+
 export function addMessageToQueue(message){
     messageQueue.push({
         message: message,
@@ -39,17 +45,21 @@ export function addMessageToQueue(message){
         },
         execute: function () {
             this.requestSent = false;
+            if(session.oldestMessageIndex == -1 || session.oldestMessageIndex > this.message.index) {
+                session.oldestMessageIndex = this.message.index;
+            }
             let userMatch = userCache[this.message.userId];
             let username = userMatch ? userMatch.name : "Unknown";
             let messageDiv = getMessageDiv(this.message.contents, username, ownerPfp, this.message.timestamp, this.message.fileId);
             prependMessage(messageDiv);
+            
         }
     });
 }
 
 
 export function processMessageQueue() {
-    console.log("Message queue before:", messageQueue);
+    console.log("Processing message queue");
     while (messageQueue.length > 0) {
         let event = messageQueue[0];
         if (!event.dataReady()) {
@@ -59,5 +69,5 @@ export function processMessageQueue() {
         event.execute();
         messageQueue.shift();
     }
-     console.log("Message queue after:", messageQueue);
+    sortMessages();
 }

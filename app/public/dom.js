@@ -1,4 +1,4 @@
-import { setChannelId, setGroupId } from "./session.js";
+import { setChannelId, setGroupId, resetOldestMessageIndex } from "./session.js";
 import { sendHandlers } from "./socket.js";
 
 export const element = {
@@ -59,6 +59,14 @@ export function prependMessage(elm) {
     element.messageArea.prepend(elm);
 }
 
+export function sortMessages() {
+    const nodes = [...element.messageArea.children].sort((a, b) => {
+        return String(b.dataset.timestamp).localeCompare(String(a.dataset.timestamp));
+    });
+    console.log("Sorting messages.")
+    element.messageArea.replaceChildren(...nodes);
+}
+
 export function populateChannelList(channels, groupId) {
     let channelList = document.createElement("div");
     channelList.className = "channel-list";
@@ -96,6 +104,7 @@ export function populateChannelList(channels, groupId) {
 }
 
 export function clearMessages() {
+    resetOldestMessageIndex();
     element.messageArea.replaceChildren();
 }
 

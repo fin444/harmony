@@ -117,15 +117,17 @@ socket.addEventListener("message", (event) => {
             break;
         case "messages":
             receiveHandlers.messages(data.channelId, data.messages);
+            processMessageQueue();
             break;
         case "typingIndicator":
             receiveHandlers.typingIndicator(data.channelId, data.usersTyping);
             break;
         case "userInfo":
             receiveHandlers.userInfo(data.id, data.username, data.pfpId);
+            processMessageQueue();
             break;
         default:
             break;
     }
-    processMessageQueue();
+    
 });

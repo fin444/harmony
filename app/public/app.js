@@ -34,7 +34,10 @@ function signout() {
 
 }
 
-
+function loadSomeOlderMessages() {
+    if (session.oldestMessageIndex <= 1) return;
+    sendHandlers.getMessages(session.channelId, session.oldestMessageIndex - 1);
+}
 
 export function sendMessage() {
 
@@ -59,6 +62,12 @@ export function sendMessage() {
 export function initializePage () {
     console.log("Initializing page");
     setPfp(ownerPfp);
+    element.messageArea.addEventListener("scroll", () => {
+        if (element.messageArea.scrollTop <= 0) {
+            console.log("Scrolled to top! Loading more messages!");
+            loadSomeOlderMessages();
+        }
+    });
     element.messageInputDiv.classList.add("hidden");
     element.newGroupButton.addEventListener("click", () => createGroup("test"));
     element.messageSendButton.addEventListener("click", () => sendMessage());
