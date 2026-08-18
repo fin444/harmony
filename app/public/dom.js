@@ -2,6 +2,8 @@ import { setChannelId, setGroupId, resetOldestMessageIndex } from "./session.js"
 import { sendHandlers } from "./socket.js";
 
 export const element = {
+
+
     groupList : document.getElementById("group-list"),
     userPfp : document.getElementById("profile-image"),
     signoutButton : document.getElementById("sign-out"),
@@ -15,18 +17,28 @@ export const element = {
     newGroupButton : document.getElementById("new-group"),
 };
 
-export function getChoiceFromPanel(prompt, options, parent) {
-    
-}
+export function createPopup(form, onSubmit) {
+    function destroy(element) {
+        element.remove();
+    }
 
-export function getTextFromPanel(placeholder, parent) {
+    let popup = document.createElement("dialog");
+
     let obscure = document.createElement("div");
-    background.className = "obscure";
-    let panel = document.createElement("div");
-    panel.className = "text-popover";
-    panel.placeholder = placeholder;
-    let prompt = document.createElement("p");
+    obscure.className = "obscure";
+    obscure.addEventListener("click", () => {
+        destroy(popup);
+    });
+    popup.appendChild(obscure);
 
+    form.method = "dialog";
+    form.addEventListener("submit", () => {
+        onSubmit();
+        destroy(popup);
+    });
+    popup.appendChild(form);
+    
+    document.appendChild(popup);
 }
 
 export function populateGroupList(groups) { 
@@ -86,12 +98,14 @@ export function populateChannelList(channels, groupId) {
         channelButtonElm.className = 'channel-button';
         channelButtonElm.type = 'button';
         channelButtonElm.dataset.channelId = channel.id;
+        channelButtonElm.dataset.name = channel.name;
         channelButtonElm.addEventListener("click", () => {
             const channelButtons = document.querySelectorAll('.channel-button');
             let channelId = parseInt(channelButtonElm.dataset.channelId);
             channelButtons.forEach(b => b.classList.remove('is-selected'));
             channelButtonElm.classList.toggle('is-selected');
             setChannelId(channelId);
+            setBannerText()
             clearMessages();
             element.messageInputDiv.classList.remove("hidden");
             sendHandlers.getMessages(channelId, null);
@@ -110,33 +124,42 @@ export function clearMessages() {
 
 export function getMessageDiv(message, username, pfpUrl, timestamp, file, index) {
     let parentElm = document.createElement("div");
-    parentElm.className = "chat-element-div";
     parentElm.dataset.timestamp = timestamp;
     parentElm.dataset.index = index;
+
+    let messageElm = document.createElement("div");
+    messageElm.className = "chat-element-div";
 
     let timestampElm = document.createElement("p");
     timestampElm.className = "chat-timestamp";
     let dateTime = new Date(timestamp);
     timestampElm.textContent = dateTime.toLocaleTimeString();
-
-    let bodyElm = document.createElement("p");
-    bodyElm.className = "chat-message";
-    bodyElm.textContent = message;
-
-    let usernameElm = document.createElement("p");
-    usernameElm.className = "chat-username";
-    usernameElm.textContent = username;
+    messageElm.append(timestampElm);
 
     let pfpElm = document.createElement("img");
     pfpElm.className = "chat-profile-pic";
     pfpElm.src = pfpUrl;
+    messageElm.append(pfpElm);
 
-    // TODO: FILE ATTACHMENTS
+    let usernameElm = document.createElement("p");
+    usernameElm.className = "chat-username";
+    usernameElm.textContent = username;
+    messageElm.append(usernameElm);
 
-    parentElm.append(timestampElm);
-    parentElm.append(pfpElm);
-    parentElm.append(usernameElm);
-    parentElm.append(bodyElm);
+
+    let bodyElm = document.createElement("p");
+    bodyElm.className = "chat-message";
+    bodyElm.textContent = message;
+    messageElm.append(bodyElm);
+
+    parentElm.append(messageElm);
+
+    if(file) {
+        let fileElm = document.createElement("div");
+        fileElm.className = "chat-file";
+        // File stuff here
+        parentElm.append(fileElm);
+    }
 
     return parentElm;
 }

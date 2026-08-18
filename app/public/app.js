@@ -8,9 +8,6 @@ export const ownerPfp = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ
 let ownerUsername = "test_user";
 let otherPfp = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOaa8Hmv8r-hqG31BpFaSI-AlPdkFTnIeLHNbKgJVTYCRsm3zMR28O8nMT&s=10";
 
-// Functions
-
-
 
 function getFormattedDate(date) {
     return date.toLocaleTimeString('en-US', {
@@ -29,8 +26,8 @@ function createGroup(name) {
 
 
 function signout() {
+    // TODO: clear token from cookie
     window.location.href = "/";
-    // Clear token
 
 }
 
