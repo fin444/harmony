@@ -59,6 +59,7 @@ export function sendMessage() {
 export function initializePage () {
     console.log("Initializing page");
     setPfp(ownerPfp);
+    element.messageInputDiv.classList.add("hidden");
     element.newGroupButton.addEventListener("click", () => createGroup("test"));
     element.messageSendButton.addEventListener("click", () => sendMessage());
     element.signoutButton.addEventListener("click", () => {signout()});

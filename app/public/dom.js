@@ -7,12 +7,27 @@ export const element = {
     signoutButton : document.getElementById("sign-out"),
 
     groupHeaderTitle : document.getElementById("group-header-text"),
+    messageInputDiv : document.getElementById("input"),
     messageInputField : document.getElementById("type"),
     messageSendButton : document.getElementById("send"),
 
     messageArea : document.getElementById("messages"),
     newGroupButton : document.getElementById("new-group"),
 };
+
+export function getChoiceFromPanel(prompt, options, parent) {
+    
+}
+
+export function getTextFromPanel(placeholder, parent) {
+    let obscure = document.createElement("div");
+    background.className = "obscure";
+    let panel = document.createElement("div");
+    panel.className = "text-popover";
+    panel.placeholder = placeholder;
+    let prompt = document.createElement("p");
+
+}
 
 export function populateGroupList(groups) { 
     element.groupList.replaceChildren();   
@@ -70,6 +85,7 @@ export function populateChannelList(channels, groupId) {
             channelButtonElm.classList.toggle('is-selected');
             setChannelId(channelId);
             clearMessages();
+            element.messageInputDiv.classList.remove("hidden");
             sendHandlers.getMessages(channelId, null);
         });
         channelList.append(channelButtonElm);
@@ -83,13 +99,16 @@ export function clearMessages() {
     element.messageArea.replaceChildren();
 }
 
-export function getMessageDiv(message, username, pfpUrl, timestamp, file) {
+export function getMessageDiv(message, username, pfpUrl, timestamp, file, index) {
     let parentElm = document.createElement("div");
     parentElm.className = "chat-element-div";
+    parentElm.dataset.timestamp = timestamp;
+    parentElm.dataset.index = index;
 
     let timestampElm = document.createElement("p");
     timestampElm.className = "chat-timestamp";
-    timestampElm.textContent = timestamp;
+    let dateTime = new Date(timestamp);
+    timestampElm.textContent = dateTime.toLocaleTimeString();
 
     let bodyElm = document.createElement("p");
     bodyElm.className = "chat-message";
