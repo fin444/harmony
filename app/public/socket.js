@@ -51,7 +51,6 @@ export const sendHandlers = {
     getGroupInfo:   function (id) {
         let data = {type: 'getGroupInfo', id: id};
         socket.send(JSON.stringify(data));
-        // setChannelId(1); // Baked in test
         console.log("Current group set to ", session.curGroupId);
         console.log("Channel ID set", session.channelId);
     },

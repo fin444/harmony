@@ -105,7 +105,6 @@ export function populateChannelList(channels, groupId) {
             channelButtons.forEach(b => b.classList.remove('is-selected'));
             channelButtonElm.classList.toggle('is-selected');
             setChannelId(channelId);
-            setBannerText()
             clearMessages();
             element.messageInputDiv.classList.remove("hidden");
             sendHandlers.getMessages(channelId, null);
