@@ -172,6 +172,18 @@ export function getMessageFieldText() {
     return text;
 }
 
+export function createFileForm() {
+    let form = document.createElement("form");
+    let input = document.createElement("input");
+    input.type = "file";
+    form.appendChild(input);
+    let submit = document.createElement("input");
+    submit.type = "submit";
+    submit.value = "upload";
+    form.appendChild(submit);
+    return form;
+}
+
 export function setPfp(src) {
     element.userPfp.src = src;
 }
