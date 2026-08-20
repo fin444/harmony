@@ -1,7 +1,6 @@
 import { sendHandlers } from "./socket.js";
-import { session, inChannel } from "./session.js";
-import { element, getMessageFieldText, setPfp } from "./dom.js";
-import { messageQueue } from "./session.js";
+import { session, inChannel, messageQueue, uploadFile } from "./session.js";
+import { element, createPopup, getMessageFieldText, setPfp, createFileForm } from "./dom.js";
 
 
 export const ownerPfp = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOaa8Hmv8r-hqG31BpFaSI-AlPdkFTnIeLHNbKgJVTYCRsm3zMR28O8nMT&s=10";
@@ -51,7 +50,7 @@ export function sendMessage() {
     }
 
     console.log("Sending message in channel ", session.channelId, ": ", messageText);
-    sendHandlers.sendMessage(session.channelId, messageText, null);
+    sendHandlers.sendMessage(session.channelId, messageText, session.messageFileId);
 }
 
 
@@ -70,6 +69,14 @@ export function initializePage () {
     });
     element.messageInputDiv.classList.add("hidden");
     element.newGroupButton.addEventListener("click", () => createGroup("test"));
+    element.messageAttachButton.addEventListener("click", () => {
+        let form = createFileForm();
+        createPopup(form, () => {
+            uploadFile(form.querySelector("input[type=file]").files[0], (id) => {
+                session.messageFileId = id;
+            });
+        });
+    });
     element.messageSendButton.addEventListener("click", () => sendMessage());
     element.signoutButton.addEventListener("click", () => {signout()});
     element.messageInputField.addEventListener("keydown", (event) => {

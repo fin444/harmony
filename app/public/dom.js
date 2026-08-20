@@ -10,6 +10,7 @@ export const element = {
 
     groupHeaderTitle : document.getElementById("group-header-text"),
     messageInputDiv : document.getElementById("input"),
+    messageAttachButton : document.getElementById("attach"),
     messageInputField : document.getElementById("type"),
     messageSendButton : document.getElementById("send"),
 

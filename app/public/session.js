@@ -8,6 +8,7 @@ export const session = {
     channelId: -1,
     oldestMessageIndex: -1,
     token: null,
+    messageFileId: null
 };
 
 
