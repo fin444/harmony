@@ -60,6 +60,12 @@ export const db = {
 			[username, password, pfpId])
 		).rows[0]
 	},
+	setUserPfp: async function(id, pfpId) {
+		return (await pool.query(
+			`update "user" set "pfpId" = $2 where "id" = $1 returning *`,
+			[id, pfpId]
+		)).rows[0]
+	},
 	getUser: async function(id) {
 		return (await pool.query(
 			`select * from "user" where "id" = $1`,

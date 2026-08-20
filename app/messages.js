@@ -1,6 +1,6 @@
 import {tokenUser} from "./account.js"
 import {db} from "./database.js"
-import {addUser, broadcast, broadcastAdaptive, send} from "./websocket.js"
+import {addUser, broadcast, broadcastAdaptive, broadcastAll, send} from "./websocket.js"
 
 export const specs = {
 	token: {token: "str"},
@@ -153,7 +153,8 @@ export const handlers = {
 	},
 
 	setPfp: async function(data, num, user, socket) {
-		// TODO
+		let u = await db.setUserPfp(user, data.fileId)
+		broadcastAll("userInfo", extractFields(u, ["id", "username", "pfpId"]))
 	},
 
 	createThing: async function(data, num, user, socket) {
