@@ -6,7 +6,8 @@ export const session = {
     userId: -1,
     groupId: -1,
     channelId: -1,
-    oldestMessageIndex: -1
+    oldestMessageIndex: -1,
+    token: null,
 };
 
 

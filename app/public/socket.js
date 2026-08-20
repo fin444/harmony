@@ -93,9 +93,10 @@ export const sendHandlers = {
 };
 
 socket.addEventListener('open', () => {
-  console.log('WebSocket connected');
-  let urlParams = new URLSearchParams(window.location.search);
-  sendHandlers.token(urlParams.get('token'));
+    console.log('WebSocket connected');
+    let urlParams = new URLSearchParams(window.location.search);
+    session.token = urlParams.get('token');
+    sendHandlers.token(session.token);
 });
 
 socket.addEventListener("message", (event) => {
