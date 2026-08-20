@@ -1,6 +1,6 @@
 import { initializePage } from "./app.js";
 import { session, userCache, addMessageToQueue, processMessageQueue, setGroupId, setChannelId } from "./session.js";
-import { populateGroupList, populateChannelList } from "./dom.js";
+import { populateGroupList, populateChannelList, updateUserPfp } from "./dom.js";
 
 const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
 
@@ -40,6 +40,7 @@ const receiveHandlers = {
     userInfo:           function (id, name, pfpId) {
         console.log("User info message from server");
         userCache[id] = {id: id, name: name, pfpId: pfpId};
+        updateUserPfp(id, pfpId)
     }
 };
 

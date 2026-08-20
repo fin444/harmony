@@ -1,12 +1,6 @@
 import { sendHandlers } from "./socket.js";
-import { session, inChannel, messageQueue, uploadFile } from "./session.js";
-import { element, createPopup, getMessageFieldText, setPfp, createFileForm } from "./dom.js";
-
-
-export const ownerPfp = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOaa8Hmv8r-hqG31BpFaSI-AlPdkFTnIeLHNbKgJVTYCRsm3zMR28O8nMT&s=10";
-let ownerUsername = "test_user";
-let otherPfp = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOaa8Hmv8r-hqG31BpFaSI-AlPdkFTnIeLHNbKgJVTYCRsm3zMR28O8nMT&s=10";
-
+import { session, userCache, inChannel, messageQueue, uploadFile } from "./session.js";
+import { element, createPopup, getMessageFieldText, createFileForm } from "./dom.js";
 
 function getFormattedDate(date) {
     return date.toLocaleTimeString('en-US', {
@@ -53,11 +47,18 @@ export function sendMessage() {
     sendHandlers.sendMessage(session.channelId, messageText, session.messageFileId);
 }
 
-
+export function pfpLink(userId) {
+    if (userId in userCache) {
+        return `/file?token=${session.token}&id=${userCache[userId].pfpId}`;
+    } else {
+        return "";
+    }
+}
 
 export function initializePage () {
     console.log("Initializing page");
-    setPfp(ownerPfp);
+    element.userPfp.alt = session.curUserId;
+    element.userPfp.src = pfpLink(session.curUserId)
     element.messageArea.addEventListener("scroll", () => {
         let container = element.messageArea;
         const maxScrollUp = container.scrollHeight - container.clientHeight;

@@ -1,5 +1,6 @@
 import { setChannelId, setGroupId, resetOldestMessageIndex } from "./session.js";
 import { sendHandlers } from "./socket.js";
+import { pfpLink } from "./app.js";
 
 export const element = {
 
@@ -173,6 +174,12 @@ export function getMessageFieldText() {
     return text;
 }
 
+export function updateUserPfp(id, pfpId) {
+    for (let e of document.querySelectorAll(`img[alt="${id}"]`)) {
+        e.src = pfpLink(pfpId)
+    }
+}
+
 export function createFileForm() {
     let form = document.createElement("form");
     let input = document.createElement("input");
@@ -183,8 +190,4 @@ export function createFileForm() {
     submit.value = "upload";
     form.appendChild(submit);
     return form;
-}
-
-export function setPfp(src) {
-    element.userPfp.src = src;
 }

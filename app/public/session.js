@@ -1,6 +1,6 @@
 import { appendMessage, getMessageDiv, prependMessage, sortMessages } from "./dom.js";
-import { ownerPfp } from "./app.js";
 import { sendHandlers } from "./socket.js";
+import { pfpLink } from "./app.js";
 
 export const session = {
     userId: -1,
@@ -52,7 +52,7 @@ export function addMessageToQueue(message){
             }
             let userMatch = userCache[this.message.userId];
             let username = userMatch ? userMatch.name : "Unknown";
-            let messageDiv = getMessageDiv(this.message.contents, username, ownerPfp, this.message.timestamp, this.message.fileId);
+            let messageDiv = getMessageDiv(this.message.contents, username, pfpLink(userMatch.pfpId), this.message.timestamp, this.message.fileId);
             prependMessage(messageDiv);
             
         }
