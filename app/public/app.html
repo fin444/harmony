@@ -25,15 +25,16 @@
       <div id="sidebar" class="sidebar-view">
 
         <header id="sidebar-title" class="sidebar-title"><h2>Disclone</h2></header>
-        <div id="new-group-div" style="margin-left:10px;"><button id="new-group">+ New Group</button></div>
+        
 
-        <form id="group-list" class="sidebar-content">
+        <form id="group-list" class="group-list">
           
         </form>
+        <div id="new-group-div" style="margin-left:10px;"><button id="new-group">+ New Group</button></div>
       <footer id="sidebar-footer" class="sidebar-footer">
         <img id="profile-image" class="sidebar-footer-pfp chat-profile-pic"/>
         <!-- <button id="profile-button">Profile</button> -->
-        <button id="sign-out-button" class="red-button">Sign out</button>
+        <button id="sign-out" class="red-button">Sign out</button>
       </footer>
       </div>
 
@@ -55,7 +56,11 @@
     
 
   </body>
-	<script src="app.js"></script>
+	
+  <script type="module" src="socket.js"></script>
+  <script type="module" src="app.js" ></script>
+  <script type="module" src="dom.js" ></script>
+  <script type="module" src="session.js" ></script>
 </html>
 
 
