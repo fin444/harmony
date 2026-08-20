@@ -126,7 +126,7 @@ export function clearMessages() {
     element.messageArea.replaceChildren();
 }
 
-export function getMessageDiv(message, username, pfpUrl, timestamp, file, index) {
+export function getMessageDiv(message, username, userId, timestamp, file, index) {
     let parentElm = document.createElement("div");
     parentElm.dataset.timestamp = timestamp;
     parentElm.dataset.index = index;
@@ -142,7 +142,8 @@ export function getMessageDiv(message, username, pfpUrl, timestamp, file, index)
 
     let pfpElm = document.createElement("img");
     pfpElm.className = "chat-profile-pic";
-    pfpElm.src = pfpUrl;
+    pfpElm.src = pfpLink(userId);
+    pfpElm.alt = userId;
     messageElm.append(pfpElm);
 
     let usernameElm = document.createElement("p");
@@ -174,9 +175,9 @@ export function getMessageFieldText() {
     return text;
 }
 
-export function updateUserPfp(id, pfpId) {
+export function updateUserPfp(id) {
     for (let e of document.querySelectorAll(`img[alt="${id}"]`)) {
-        e.src = pfpLink(pfpId)
+        e.src = pfpLink(id)
     }
 }
 

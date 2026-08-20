@@ -40,7 +40,7 @@ const receiveHandlers = {
     userInfo:           function (id, name, pfpId) {
         console.log("User info message from server");
         userCache[id] = {id: id, name: name, pfpId: pfpId};
-        updateUserPfp(id, pfpId)
+        updateUserPfp(id)
     }
 };
 

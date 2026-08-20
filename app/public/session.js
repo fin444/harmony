@@ -52,7 +52,7 @@ export function addMessageToQueue(message){
             }
             let userMatch = userCache[this.message.userId];
             let username = userMatch ? userMatch.name : "Unknown";
-            let messageDiv = getMessageDiv(this.message.contents, username, pfpLink(userMatch.pfpId), this.message.timestamp, this.message.fileId);
+            let messageDiv = getMessageDiv(this.message.contents, username, this.message.userId, this.message.timestamp, this.message.fileId);
             prependMessage(messageDiv);
             
         }

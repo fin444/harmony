@@ -85,5 +85,13 @@ export function initializePage () {
             sendMessage();
         }
     });
+	element.userPfp.addEventListener("click", () => {
+        let form = createFileForm();
+        createPopup(form, () => {
+            uploadFile(form.querySelector("input[type=file]").files[0], (id) => {
+				sendHandlers.setPfp(id);
+            });
+        });
+	});
     console.log("rent user id: ", session.UserId);
 }
