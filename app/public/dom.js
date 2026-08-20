@@ -23,22 +23,25 @@ export function createPopup(form, onSubmit) {
     }
 
     let popup = document.createElement("dialog");
+    popup.open = true;
 
     let obscure = document.createElement("div");
     obscure.className = "obscure";
     obscure.addEventListener("click", () => {
         destroy(popup);
+        destroy(obscure);
     });
-    popup.appendChild(obscure);
 
     form.method = "dialog";
     form.addEventListener("submit", () => {
         onSubmit();
         destroy(popup);
+        destroy(obscure);
     });
     popup.appendChild(form);
     
-    document.appendChild(popup);
+    document.body.appendChild(obscure);
+    document.body.appendChild(popup);
 }
 
 export function populateGroupList(groups) { 
