@@ -59,6 +59,33 @@ export function addMessageToQueue(message){
 }
 
 
+export function uploadFile(file, handler) {
+    let reader = new FileReader();
+    reader.onload = (e) => {
+        fetch(`/file?token=${session.token}&name=${file.name}`, {
+            method: "PUT",
+            body: e.target.result,
+            headers: {"Content-Type": "application/octet-stream"}
+        }).then(res => {
+            if (!res.ok) {
+                throw(response.text());
+            }
+            return res.text();
+        }).then(res => {
+            let i = parseInt(res);
+            if (isNaN(i)) {
+                throw(res, "is NaN!");
+            } else {
+                handler(i);
+            }
+        }).catch(async err => {
+            console.log("ERROR OCCURRED: ", await err);
+            handler(null);
+        });
+    };
+    reader.readAsArrayBuffer(file);
+}
+
 export function processMessageQueue() {
     console.log("Processing message queue");
     while (messageQueue.length > 0) {
