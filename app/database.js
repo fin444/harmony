@@ -20,6 +20,12 @@ export const db = {
 			[name]
 		)).rows[0]
 	},
+	getFile: async function(id) {
+		return (await pool.query(
+			`select * from "file" where "id" = $1`,
+			[id]
+		)).rows[0]
+	},
 
 	// group
 	addGroup: async function(name) {

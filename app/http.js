@@ -1,5 +1,5 @@
 import {tokenUser, tryLogin, trySignup} from "./account.js"
-import {uploadFile} from "./file.js"
+import {uploadFile, getFile, getFileName} from "./file.js"
 
 async function handleLogin(query, res, fn, errText) {
 	if (typeof query.username !== "string" || typeof query.password !== "string") {
@@ -43,9 +43,22 @@ export function initHTTP(app) {
 		}
 	})
 
-	app.get("/file", (req, res) => {
+	app.get("/file", async function(req, res) {
 		if (validateToken(req.query.token, res)) {
-			// TODO
+			if (typeof req.query.id !== "string") {
+				res.statusCode = 400
+				res.send("bad request")
+				return
+			}
+			let id = parseInt(req.query.id)
+			let data = await getFile(id)
+			if (data === null) {
+				res.statusCode = 500
+				res.send("server error :(")
+				return
+			}
+			res.append("Content-Disposition", `inline; filename="${getFileName(id)}"`)
+			res.send(data)
 		}
 	})
 
