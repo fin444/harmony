@@ -1,5 +1,6 @@
 import { setChannelId, setGroupId, resetOldestMessageIndex } from "./session.js";
 import { sendHandlers } from "./socket.js";
+import { pfpLink } from "./app.js";
 
 export const element = {
 
@@ -10,6 +11,7 @@ export const element = {
 
     groupHeaderTitle : document.getElementById("group-header-text"),
     messageInputDiv : document.getElementById("input"),
+    messageAttachButton : document.getElementById("attach"),
     messageInputField : document.getElementById("type"),
     messageSendButton : document.getElementById("send"),
 
@@ -23,22 +25,25 @@ export function createPopup(form, onSubmit) {
     }
 
     let popup = document.createElement("dialog");
+    popup.open = true;
 
     let obscure = document.createElement("div");
     obscure.className = "obscure";
     obscure.addEventListener("click", () => {
         destroy(popup);
+        destroy(obscure);
     });
-    popup.appendChild(obscure);
 
     form.method = "dialog";
     form.addEventListener("submit", () => {
         onSubmit();
         destroy(popup);
+        destroy(obscure);
     });
     popup.appendChild(form);
     
-    document.appendChild(popup);
+    document.body.appendChild(obscure);
+    document.body.appendChild(popup);
 }
 
 export function populateGroupList(groups) { 
@@ -121,7 +126,7 @@ export function clearMessages() {
     element.messageArea.replaceChildren();
 }
 
-export function getMessageDiv(message, username, pfpUrl, timestamp, file, index) {
+export function getMessageDiv(message, username, userId, timestamp, file, index) {
     let parentElm = document.createElement("div");
     parentElm.dataset.timestamp = timestamp;
     parentElm.dataset.index = index;
@@ -137,7 +142,8 @@ export function getMessageDiv(message, username, pfpUrl, timestamp, file, index)
 
     let pfpElm = document.createElement("img");
     pfpElm.className = "chat-profile-pic";
-    pfpElm.src = pfpUrl;
+    pfpElm.src = pfpLink(userId);
+    pfpElm.alt = userId;
     messageElm.append(pfpElm);
 
     let usernameElm = document.createElement("p");
@@ -169,6 +175,20 @@ export function getMessageFieldText() {
     return text;
 }
 
-export function setPfp(src) {
-    element.userPfp.src = src;
+export function updateUserPfp(id) {
+    for (let e of document.querySelectorAll(`img[alt="${id}"]`)) {
+        e.src = pfpLink(id)
+    }
+}
+
+export function createFileForm() {
+    let form = document.createElement("form");
+    let input = document.createElement("input");
+    input.type = "file";
+    form.appendChild(input);
+    let submit = document.createElement("input");
+    submit.type = "submit";
+    submit.value = "upload";
+    form.appendChild(submit);
+    return form;
 }

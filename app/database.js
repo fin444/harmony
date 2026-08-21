@@ -20,6 +20,12 @@ export const db = {
 			[name]
 		)).rows[0]
 	},
+	getFile: async function(id) {
+		return (await pool.query(
+			`select * from "file" where "id" = $1`,
+			[id]
+		)).rows[0]
+	},
 
 	// group
 	addGroup: async function(name) {
@@ -53,6 +59,12 @@ export const db = {
 				values($1, $2, $3) returning *`,
 			[username, password, pfpId])
 		).rows[0]
+	},
+	setUserPfp: async function(id, pfpId) {
+		return (await pool.query(
+			`update "user" set "pfpId" = $2 where "id" = $1 returning *`,
+			[id, pfpId]
+		)).rows[0]
 	},
 	getUser: async function(id) {
 		return (await pool.query(

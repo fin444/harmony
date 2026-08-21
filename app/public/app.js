@@ -1,13 +1,6 @@
 import { sendHandlers } from "./socket.js";
-import { session, inChannel } from "./session.js";
-import { element, getMessageFieldText, setPfp } from "./dom.js";
-import { messageQueue } from "./session.js";
-
-
-export const ownerPfp = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOaa8Hmv8r-hqG31BpFaSI-AlPdkFTnIeLHNbKgJVTYCRsm3zMR28O8nMT&s=10";
-let ownerUsername = "test_user";
-let otherPfp = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOaa8Hmv8r-hqG31BpFaSI-AlPdkFTnIeLHNbKgJVTYCRsm3zMR28O8nMT&s=10";
-
+import { session, userCache, inChannel, messageQueue, uploadFile } from "./session.js";
+import { element, createPopup, getMessageFieldText, createFileForm } from "./dom.js";
 
 function getFormattedDate(date) {
     return date.toLocaleTimeString('en-US', {
@@ -51,14 +44,21 @@ export function sendMessage() {
     }
 
     console.log("Sending message in channel ", session.channelId, ": ", messageText);
-    sendHandlers.sendMessage(session.channelId, messageText, null);
+    sendHandlers.sendMessage(session.channelId, messageText, session.messageFileId);
 }
 
-
+export function pfpLink(userId) {
+    if (userId in userCache) {
+        return `/file?token=${session.token}&id=${userCache[userId].pfpId}`;
+    } else {
+        return "";
+    }
+}
 
 export function initializePage () {
     console.log("Initializing page");
-    setPfp(ownerPfp);
+    element.userPfp.alt = session.curUserId;
+    element.userPfp.src = pfpLink(session.curUserId)
     element.messageArea.addEventListener("scroll", () => {
         let container = element.messageArea;
         const maxScrollUp = container.scrollHeight - container.clientHeight;
@@ -70,6 +70,14 @@ export function initializePage () {
     });
     element.messageInputDiv.classList.add("hidden");
     element.newGroupButton.addEventListener("click", () => createGroup("test"));
+    element.messageAttachButton.addEventListener("click", () => {
+        let form = createFileForm();
+        createPopup(form, () => {
+            uploadFile(form.querySelector("input[type=file]").files[0], (id) => {
+                session.messageFileId = id;
+            });
+        });
+    });
     element.messageSendButton.addEventListener("click", () => sendMessage());
     element.signoutButton.addEventListener("click", () => {signout()});
     element.messageInputField.addEventListener("keydown", (event) => {
@@ -77,5 +85,13 @@ export function initializePage () {
             sendMessage();
         }
     });
+	element.userPfp.addEventListener("click", () => {
+        let form = createFileForm();
+        createPopup(form, () => {
+            uploadFile(form.querySelector("input[type=file]").files[0], (id) => {
+				sendHandlers.setPfp(id);
+            });
+        });
+	});
     console.log("rent user id: ", session.UserId);
 }
