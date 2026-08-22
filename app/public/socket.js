@@ -52,7 +52,7 @@ export const sendHandlers = {
     getGroupInfo:   function (id) {
         let data = {type: 'getGroupInfo', id: id};
         socket.send(JSON.stringify(data));
-        console.log("Current group set to ", session.curGroupId);
+        console.log("Current group set to ", session.groupId);
         console.log("Channel ID set", session.channelId);
     },
     getMessages:    function (channelId, index) {
