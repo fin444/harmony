@@ -116,7 +116,29 @@ h1, h2, h3 {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 4px;
+}
+.mini-channel-button, .mini-group-button {
+    flex: 0 0 0;
+    width: 0px;
+    min-width: 0;
+    height: 25px;
+    aspect-ratio: 1;
+    padding: 0;
+    /* border-width: 0; */
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: width 0.2s, flex-basis 0.2s, opacity 0.2s, border-width 0.2s;
+}
+.list-button-container:hover .mini-channel-button,
+.list-button-container:hover .mini-group-button,
+.list-button-container:focus-within .mini-channel-button,
+.list-button-container:focus-within .mini-group-button {
+    flex-basis: 25px;
+    width: 25px;
+    opacity: 1;
+    pointer-events: auto;
+    margin-left: 4px;
 }
 .new-group-button {
     anchor-name: --new-group-button;
@@ -129,13 +151,11 @@ h1, h2, h3 {
     align-items: left;
     gap: 10px;
     overflow: visible;
-    /* overflow-y: scroll; */
 }
 
 .group-button, .mini-group-button {
     /* overflow: visible; */
     anchor-name: --group-button;
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
 }
 .group-button {
     flex: 1;
@@ -143,7 +163,6 @@ h1, h2, h3 {
 }
 .group-button.is-selected {
     box-shadow: inset 0px 2px 50px rgba(128, 128, 128, 0.5);
-
 }
 
 .popover {
@@ -158,7 +177,6 @@ h1, h2, h3 {
     border-radius: 50px;
     box-shadow: 0px 2px 50px rgba(0, 0, 0, 0.5);
 }
-
 
 .channel-list {
     margin-left: 20px;
@@ -183,9 +201,7 @@ h1, h2, h3 {
     box-shadow: inset 0px 2px 50px rgba(128, 128, 128, 0.5);
 
 }
-.channel-button:hover {
-    /* color: blue; */
-}
+
 
 
 .sidebar-footer {

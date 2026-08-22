@@ -153,37 +153,22 @@ export function populateGroupList(groups) {
 
         let renameButtonElm = getRenameButtonElm(group, "group");
         let deleteButtonElm = getDeleteButton(group, "group");
-        container.addEventListener('mouseenter', () => {
-            container.appendChild(renameButtonElm);
-            container.appendChild(deleteButtonElm);
-        });
-        container.addEventListener('mouseleave', () => {
-            if (container.contains(deleteButtonElm)) {
-                container.removeChild(deleteButtonElm);
-            }
-            if (container.contains(renameButtonElm)) {
-                container.removeChild(renameButtonElm);
-            }
-        });
 
-        function selectButton() {
+
+        function select() {
             const groupButtons = document.querySelectorAll('.group-button');
             groupButtons.forEach(b => b.classList.remove('is-selected'));
             groupButtonElm.classList.toggle('is-selected');
-        }
-        
-        function selectGroup() {
             sendHandlers.getGroupInfo(group.id);
             setGroupId(group.id);
         }
 
         let alreadySelected = session.groupId === group.id;
-        if(alreadySelected) selectButton();
-        groupButtonElm.addEventListener("click", () => {
-            selectButton();
-            selectGroup();
-        });
+        if(alreadySelected) select();
+        groupButtonElm.addEventListener("click", () => select());
         container.appendChild(groupButtonElm);
+        container.appendChild(renameButtonElm);
+        container.appendChild(deleteButtonElm);
         element.groupList.appendChild(container);
     }
 }
@@ -229,19 +214,6 @@ export function populateChannelList(channels, groupId) {
         let renameButtonElm = getRenameButtonElm(channel, "channel");
         let deleteButtonElm = getDeleteButton(channel, "channel");
 
-        container.addEventListener('mouseenter', () => {
-            container.appendChild(renameButtonElm);
-            container.appendChild(deleteButtonElm);
-        });
-        container.addEventListener('mouseleave', () => {
-            if (container.contains(deleteButtonElm)) {
-                container.removeChild(deleteButtonElm);
-            }
-            if (container.contains(renameButtonElm)) {
-                container.removeChild(renameButtonElm);
-            }
-        });
-
         function selectButton() {
             const channelButtons = document.querySelectorAll('.channel-button');
             channelButtons.forEach(b => b.classList.remove('is-selected'));
@@ -262,6 +234,8 @@ export function populateChannelList(channels, groupId) {
             selectChannel();
         });
         container.append(channelButtonElm);
+        container.appendChild(renameButtonElm);
+        container.appendChild(deleteButtonElm);
         channelList.append(container);
     }
 
