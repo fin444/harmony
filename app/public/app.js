@@ -58,7 +58,7 @@ export function initializePage () {
     element.messageInputDiv.classList.add("hidden");
     element.newGroupButton.addEventListener("click", () => createGroup("Untitled group"));
     element.messageAttachButton.addEventListener("click", () => {
-        let form = createFileForm();
+        let form = getElement.fileForm();
         createPopup(form, () => {
             uploadFile(form.querySelector("input[type=file]").files[0], (id) => {
                 session.messageFileId = id;
