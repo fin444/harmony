@@ -96,6 +96,43 @@ function getTextInputForm (placeholder) {
     return form;
 }
 
+function getDeleteButton(thing, thingType) {
+    let deleteButtonElm = document.createElement("button");
+    deleteButtonElm.title = "Delete " + thing.name;
+    deleteButtonElm.textContent = "x";
+    deleteButtonElm.type = 'button';
+    deleteButtonElm.className = `mini-${thingType}-button`;
+
+    deleteButtonElm.addEventListener('click', () => {
+        console.log('Delete button clicked!');
+        createPopup(getYesOrNoForm(`Delete ${thingType} ${thing.name}?`), () => {
+            console.log(`Deleting ${thingType} ${thing.name} with ID: ${thing.id}`);
+            sendHandlers.deleteThing(thingType, thing.id);
+            noChannelSelected();
+        });
+    });
+    return deleteButtonElm;
+}
+
+function getRenameButtonElm(thing, thingType) {
+
+    let renameButtonElm = document.createElement("button");
+    renameButtonElm.title = "Rename " + thing.name;
+    renameButtonElm.textContent = "R";
+    renameButtonElm.type = 'button';
+    renameButtonElm.className = `mini-${thingType}-button`;
+
+    renameButtonElm.addEventListener('click', () => {
+        let form = getTextInputForm(`Rename ${thing.name}`);
+        createPopup(form, () => {
+            console.log(`Renaming ${thingType} ${thing.name} with ID: ${thing.id} to ${form.dataset.string}`);
+            sendHandlers.renameThing(thingType, thing.id, form.dataset.string);
+        });
+        console.log('Rename button clicked!');
+    });
+    return renameButtonElm;
+}
+
 function noChannelSelected() {
     element.messageInputDiv.classList.add("hidden");
     clearMessages();
@@ -106,26 +143,30 @@ export function populateGroupList(groups) {
     element.groupList.replaceChildren();   
     for(let group of groups) {
         let container = document.createElement("div");
-        container.className = ("group-button-container");
-        let groupButtonElm = document.createElement("button");
+        container.className = ("list-button-container");
 
+        let groupButtonElm = document.createElement("button");
         groupButtonElm.textContent = "@ " + group.name;
         groupButtonElm.className = 'group-button';
         groupButtonElm.title = "Open " + group.name;
         container.dataset.groupId = group.id;
         groupButtonElm.type = 'button';
 
-        let renameButtonElm = document.createElement("button");
-        renameButtonElm.title = "Rename " + group.name;
-        renameButtonElm.textContent = "R";
-        renameButtonElm.type = 'button';
-        renameButtonElm.className = "mini-group-button";
 
-        let deleteButtonElm = document.createElement("button");
-        deleteButtonElm.title = "Delete " + group.name;
-        deleteButtonElm.textContent = "x";
-        deleteButtonElm.type = 'button';
-        deleteButtonElm.className = "mini-group-button";
+        let renameButtonElm = getRenameButtonElm(group, "group");
+        let deleteButtonElm = getDeleteButton(group, "group");
+        container.addEventListener('mouseenter', () => {
+            container.appendChild(renameButtonElm);
+            container.appendChild(deleteButtonElm);
+        });
+        container.addEventListener('mouseleave', () => {
+            if (container.contains(deleteButtonElm)) {
+                container.removeChild(deleteButtonElm);
+            }
+            if (container.contains(renameButtonElm)) {
+                container.removeChild(renameButtonElm);
+            }
+        });
 
         function selected() {
             const groupButtons = document.querySelectorAll('.group-button');
@@ -144,37 +185,7 @@ export function populateGroupList(groups) {
             selected();
         });
 
-        deleteButtonElm.addEventListener('click', () => {
-            createPopup(getYesOrNoForm("Delete group \"" + group.name + "\"?"), () => {
-                console.log("Deleting group " + group.name + " with ID: " + group.id);
-                sendHandlers.deleteThing("group", group.id);
-                noChannelSelected();
-            });
-            console.log('Delete button clicked!');
-        });
 
-        renameButtonElm.addEventListener('click', () => {
-            let form = getTextInputForm(("Rename " + group.name));
-            createPopup(form, () => {
-                console.log("Renaming group " + group.name + " with ID: " + group.id + " to " + form.dataset.string);
-                sendHandlers.renameThing("group", group.id, form.dataset.string);
-            });
-            console.log('Rename button clicked!');
-        });
-
-        container.addEventListener('mouseenter', () => {
-            container.appendChild(renameButtonElm);
-            container.appendChild(deleteButtonElm);
-        });
-
-        container.addEventListener('mouseleave', () => {
-            if (container.contains(deleteButtonElm)) {
-                container.removeChild(deleteButtonElm);
-            }
-            if (container.contains(renameButtonElm)) {
-                container.removeChild(renameButtonElm);
-            }
-        });
         container.appendChild(groupButtonElm);
         element.groupList.append(container);
     }
@@ -208,12 +219,31 @@ export function populateChannelList(channels, groupId) {
     }
     
     for(let channel of channels) {
+
+        let container = document.createElement("div");
+        container.className = ("list-button-container");
+
         let channelButtonElm = document.createElement("button");
         channelButtonElm.textContent = '# '+ channel.name;
         channelButtonElm.className = 'channel-button';
         channelButtonElm.type = 'button';
         channelButtonElm.dataset.channelId = channel.id;
         channelButtonElm.dataset.name = channel.name;
+
+        let renameButtonElm = getRenameButtonElm(channel, "channel");
+        let deleteButtonElm = getDeleteButton(channel, "channel");
+        container.addEventListener('mouseenter', () => {
+            container.appendChild(renameButtonElm);
+            container.appendChild(deleteButtonElm);
+        });
+        container.addEventListener('mouseleave', () => {
+            if (container.contains(deleteButtonElm)) {
+                container.removeChild(deleteButtonElm);
+            }
+            if (container.contains(renameButtonElm)) {
+                container.removeChild(renameButtonElm);
+            }
+        });
 
         function selected() {
             const channelButtons = document.querySelectorAll('.channel-button');
@@ -233,7 +263,9 @@ export function populateChannelList(channels, groupId) {
         channelButtonElm.addEventListener("click", () => {
             selected();
         });
-        channelList.append(channelButtonElm);
+
+        container.append(channelButtonElm);
+        channelList.append(container);
     }
 
     let channelButtonElm = document.createElement("button");

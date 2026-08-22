@@ -25,6 +25,7 @@
 
 
 button, input {
+    
     background-color: var(--elm-highlight-color);
     border-radius: 10px;
     border-style: none;
@@ -35,15 +36,17 @@ button, input {
 }
 
 button {
-  font-family: inherit;
-  color: currentColor;
-  cursor: pointer;
-  transition: filter 0.2s, box-shadow 0.2s, background-color 0.2s, transform 0.1s, text-shadow 0.2s;
-  -webkit-tap-highlight-color: transparent; /* Removes the flicker on iPad/Mobile */
-  border: 2px solid #00000018;
-  /* border-radius: 0.7rem; */
-  /* box-shadow: 0 2px 0.1rem 0rem #00000007; */
-  
+    overflow: hidden; 
+    white-space: nowrap;
+    min-width: 0;
+    text-overflow: ellipsis;
+    font-family: inherit;
+    color: currentColor;
+    cursor: pointer;
+    transition: filter 0.2s, box-shadow 0.2s, background-color 0.2s, transform 0.1s, text-shadow 0.2s;
+    -webkit-tap-highlight-color: transparent; /* Removes the flicker on iPad/Mobile */
+    border: 2px solid #00000018;
+
 }
 button:hover {
   transform: translateY(-1.3px);
@@ -108,7 +111,13 @@ h1, h2, h3 {
 }
 
 
-
+.list-button-container {
+    overflow: visible;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+}
 .new-group-button {
     anchor-name: --new-group-button;
 }
@@ -122,13 +131,7 @@ h1, h2, h3 {
     overflow: visible;
     /* overflow-y: scroll; */
 }
-.group-button-container {
-    overflow: visible;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 4px;
-}
+
 .group-button, .mini-group-button {
     overflow: visible;
     anchor-name: --group-button;
@@ -166,12 +169,16 @@ h1, h2, h3 {
     gap: 10px;
     overflow-y: scroll;
 }
-.channel-button {
+.channel-button, .mini-channel-button {
     anchor-name: --group-button;
-    text-align: left;
     height: 25px;
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
 }
+.channel-button {
+    flex: 1;
+    text-align: left;
+}
+
 .channel-button.is-selected {
     box-shadow: inset 0px 2px 50px rgba(128, 128, 128, 0.5);
 
