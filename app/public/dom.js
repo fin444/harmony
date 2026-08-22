@@ -1,7 +1,6 @@
 import { setChannelId, setGroupId, resetOldestMessageIndex, session } from "./session.js";
 import { sendHandlers } from "./socket.js";
 import { pfpLink } from "./app.js";
-// import { text } from "express";
 
 export const element = {
     groupList : document.getElementById("group-list"),
@@ -81,7 +80,7 @@ function getTextInputForm (placeholder) {
     let yesButton = document.createElement("button");
     yesButton.type = "submit";
     yesButton.textContent = "Done";
-    yesButton.addEventListener("click", () => {
+    form.addEventListener("submit", () => {
         form.dataset.string = textInput.value;
     });
 
@@ -152,7 +151,6 @@ export function populateGroupList(groups) {
         container.dataset.groupId = group.id;
         groupButtonElm.type = 'button';
 
-
         let renameButtonElm = getRenameButtonElm(group, "group");
         let deleteButtonElm = getDeleteButton(group, "group");
         container.addEventListener('mouseenter', () => {
@@ -180,9 +178,7 @@ export function populateGroupList(groups) {
         if(session.groupId === group.id) {
             selected();
         }
-
         groupButtonElm.addEventListener("click", selected());
-
         container.appendChild(groupButtonElm);
         element.groupList.append(container);
     }
@@ -229,6 +225,7 @@ export function populateChannelList(channels, groupId) {
 
         let renameButtonElm = getRenameButtonElm(channel, "channel");
         let deleteButtonElm = getDeleteButton(channel, "channel");
+
         container.addEventListener('mouseenter', () => {
             container.appendChild(renameButtonElm);
             container.appendChild(deleteButtonElm);
@@ -256,9 +253,7 @@ export function populateChannelList(channels, groupId) {
         if(session.groupId === groupId && session.channelId === channel.id) {
             selected();
         }
-
         channelButtonElm.addEventListener("click", selected());
-
         container.append(channelButtonElm);
         channelList.append(container);
     }
