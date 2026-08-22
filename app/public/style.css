@@ -133,7 +133,7 @@ h1, h2, h3 {
 }
 
 .group-button, .mini-group-button {
-    overflow: visible;
+    /* overflow: visible; */
     anchor-name: --group-button;
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
 }
