@@ -4,8 +4,11 @@ import { pfpLink } from "./app.js";
 
 export const session = {
     userId: -1,
+    userName: "",
     groupId: -1,
+    groupName: "",
     channelId: -1,
+    channelName: "",
     oldestMessageIndex: -1,
     token: null,
     messageFileId: null

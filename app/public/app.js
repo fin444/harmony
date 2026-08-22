@@ -1,5 +1,5 @@
 import { sendHandlers } from "./socket.js";
-import { session, userCache, inChannel, messageQueue, uploadFile } from "./session.js";
+import { session, userCache, inChannel, uploadFile } from "./session.js";
 import { element, createPopup, getMessageFieldText, createFileForm } from "./dom.js";
 
 function getFormattedDate(date) {
@@ -69,7 +69,7 @@ export function initializePage () {
         
     });
     element.messageInputDiv.classList.add("hidden");
-    element.newGroupButton.addEventListener("click", () => createGroup("test"));
+    element.newGroupButton.addEventListener("click", () => createGroup("Untitled group"));
     element.messageAttachButton.addEventListener("click", () => {
         let form = createFileForm();
         createPopup(form, () => {

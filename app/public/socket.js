@@ -75,8 +75,8 @@ export const sendHandlers = {
         let data = {type: 'setPfp', fileId: fileId};
         socket.send(JSON.stringify(data));
     },
-    createThing:    function (thingType, name) {
-        let data = {type: 'createThing', thingType: thingType, name: name};
+    createThing:    function (thingType, name, id = null) {
+        let data = {type: 'createThing', thingType: thingType, name: name, groupId: id};
         socket.send(JSON.stringify(data));
     },
     renameThing:    function (thingType, id, name) {
