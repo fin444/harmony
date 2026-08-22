@@ -102,28 +102,15 @@ h1, h2, h3 {
 
 .sidebar-view {
     z-index: 2;
+    flex: 0 0 auto;
     display: flex;
     resize: horizontal;
     overflow: auto;
     flex-direction: column;
     background-color: var(--bg-secondary);
     /* width: 20%; */
+    max-width: 500px;
     min-width: 175px;
-}
-
-.resizer-right {
-  width: 10px;
-  height: 100%;
-  background: #ccc;
-  position: absolute;
-  top: 0;
-  right: 0;
-  cursor: col-resize; /* Changes cursor to horizontal resize arrow */
-  user-select: none;  /* Prevents text highlighting while dragging */
-}
-
-.resizer-right:hover {
-  background: #8a8a8a;
 }
 
 
@@ -254,9 +241,8 @@ dialog {
 /* --- CHAT VIEW & MESSAGE VIEW UPDATES --- */
 
 .chat-view {
-    width: 80%;
     
-    /* Layout children vertically */
+    flex: 1;
     display: flex;
     flex-direction: column;
 }

@@ -1,22 +1,11 @@
 import { sendHandlers } from "./socket.js";
 import { session, userCache, inChannel, uploadFile } from "./session.js";
-import { element, createPopup, getMessageFieldText, createFileForm } from "./dom.js";
-
-function getFormattedDate(date) {
-    return date.toLocaleTimeString('en-US', {
-        hour12: true,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-    });
-}
-
+import { element, getMessageFieldText, createPopup, getElement } from "./dom.js";
 
 function createGroup(name) {
     console.log("Create group function called with name: ", name);
     sendHandlers.createThing("group", name);
 }
-
 
 function signout() {
     // TODO: clear token from cookie
@@ -30,14 +19,12 @@ function loadSomeOlderMessages() {
 }
 
 export function sendMessage() {
-
     if (!inChannel()) {
         console.log("Cannot send message. Not currently in a channel.");
         return;
     }
 
     let messageText = getMessageFieldText();
-    
     if(messageText === "") {
         console.log("Cannot send message. Nothing in message text field.");
         return;
@@ -86,7 +73,7 @@ export function initializePage () {
         }
     });
 	element.userPfp.addEventListener("click", () => {
-        let form = createFileForm();
+        let form = getElement.fileForm();
         createPopup(form, () => {
             uploadFile(form.querySelector("input[type=file]").files[0], (id) => {
 				sendHandlers.setPfp(id);

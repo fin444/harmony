@@ -1,6 +1,6 @@
 import { initializePage } from "./app.js";
-import { session, userCache, addMessageToQueue, processMessageQueue, setGroupId, setChannelId } from "./session.js";
-import { populateGroupList, populateChannelList, updateUserPfp } from "./dom.js";
+import { session, userCache, addMessageToQueue, processMessageQueue } from "./session.js";
+import { populate, updateUserPfp } from "./dom.js";
 
 const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
 
@@ -15,12 +15,12 @@ const receiveHandlers = {
     },
     groupList:          function (groups) {
         console.log("Group list message from server");
-        populateGroupList(groups);
+        populate.groupList(groups);
     },
     groupInfo:          function (groupId, channels) {
         console.log("Group info message from server. Server Group ID = ", groupId, " Session Group ID = ", session.groupId);
         if(session.groupId === groupId) {
-            populateChannelList(channels, groupId);
+            populate.channelList(channels, groupId);
         }
     },
     messages:           function (channelId, messages) {
