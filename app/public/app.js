@@ -44,8 +44,8 @@ export function pfpLink(userId) {
 
 export function initializePage () {
     console.log("Initializing page");
-    element.userPfp.alt = session.curUserId;
-    element.userPfp.src = pfpLink(session.curUserId)
+    element.userPfp.alt = session.userId;
+    element.userPfp.src = pfpLink(session.userId);
     element.messageArea.addEventListener("scroll", () => {
         let container = element.messageArea;
         const maxScrollUp = container.scrollHeight - container.clientHeight;
