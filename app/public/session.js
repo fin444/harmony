@@ -55,7 +55,7 @@ export function addMessageToQueue(message){
             }
             let userMatch = userCache[this.message.userId];
             let username = userMatch ? userMatch.name : "Unknown";
-            let messageDiv = getElement.messageDiv(this.message.contents, username, this.message.userId, this.message.timestamp, this.message.fileId);
+            let messageDiv = getElement.messageDiv(this.message.contents, username, this.message.userId, this.message.timestamp, this.message.fileId, this.message.index);
             prependMessage(messageDiv);
             
         }
