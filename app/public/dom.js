@@ -6,20 +6,21 @@ export const element = {
     groupList : document.getElementById("group-list"),
     userPfp : document.getElementById("profile-image"),
     signoutButton : document.getElementById("sign-out"),
-
+    chatHeader : document.getElementById("chat-header"),
+    chatHeaderTitle : document.getElementById("chat-header-text"),
+    inviteUserButton : document.getElementById("invite-user"),
     groupHeaderTitle : document.getElementById("group-header-text"),
     messageInputDiv : document.getElementById("input"),
     messageAttachButton : document.getElementById("attach"),
     messageInputField : document.getElementById("type"),
     messageSendButton : document.getElementById("send"),
-
     messageArea : document.getElementById("messages"),
     newGroupButton : document.getElementById("new-group"),
 };
 
 export const populate = {
     groupList : function (groups) {
-        clearMessageView();
+        hideMessageView();
         element.groupList.replaceChildren();   
         for(let group of groups) {
             let container = document.createElement("div");
@@ -34,6 +35,13 @@ export const populate = {
 
             let renameButtonElm = getElement.renameButton(group, "group");
             let deleteButtonElm = getElement.deleteButton(group, "group");
+            deleteButtonElm.addEventListener('click', () => {
+                if(session.groupId === group.id) {
+                    session.groupId = -1;
+                    session.channelId = -1;
+                    noChannelSelected();
+                }
+            });
 
             function select() {
                 const groupButtons = document.querySelectorAll('.group-button');
@@ -46,11 +54,12 @@ export const populate = {
             function deselect() {
                 groupButtonElm.classList.remove('is-selected');
                 noChannelSelected();
-                clearChannelList();
+                clear.channelList();
             }
 
             let alreadyCurrent = session.groupId === group.id;
             if(alreadyCurrent) select();
+            else groupButtonElm.classList.remove('is-selected');
             groupButtonElm.addEventListener("click", () => {
                 if(groupButtonElm.classList.contains('is-selected')) {
                     deselect();
@@ -65,13 +74,12 @@ export const populate = {
         }
     },
     channelList : function (channels, groupId) {
-        clearMessageView();
+        hideMessageView();
+        clear.channelList();
         let channelList = document.createElement("div");
         channelList.className = "channel-list";
 
         let groupButtonContainerElm = document.querySelector(`[data-group-id="${groupId}"]`);
-        
-        clearChannelList();
         
         for(let channel of channels) {
             let container = document.createElement("div");
@@ -86,15 +94,24 @@ export const populate = {
 
             let renameButtonElm = getElement.renameButton(channel, "channel");
             let deleteButtonElm = getElement.deleteButton(channel, "channel");
+            deleteButtonElm.addEventListener('click', () => {
+                if(session.channelId === channel.id) {
+                    session.channelId = -1;
+                    noChannelSelected();
+                }
+            });
 
             function select() {
                 const channelButtons = document.querySelectorAll('.channel-button');
                 channelButtons.forEach(b => b.classList.remove('is-selected'));
                 channelButtonElm.classList.toggle('is-selected');
-                setChannelId(channel.id);
-                clearMessages();
+                session.channelId = channel.id;
+                clear.messages();
                 element.messageInputDiv.classList.remove("hidden");
                 sendHandlers.getMessages(channel.id, null);
+                session.groupName = groupButtonContainerElm.querySelector(".group-button").textContent.substring(2);
+                session.channelName = channel.name;
+                populate.chatHeaderText(session.groupName, session.channelName);
             }
 
             function deselect() {
@@ -102,8 +119,9 @@ export const populate = {
                 noChannelSelected();
             }
 
-            let alreadyCurrent = session.groupId === groupId && session.channelId === channel.id;
+            let alreadyCurrent = session.channelId === channel.id;
             if(alreadyCurrent) select();
+            else channelButtonElm.classList.remove('is-selected');
             channelButtonElm.addEventListener("click", () => {
                 if(channelButtonElm.classList.contains('is-selected')) {
                     deselect();
@@ -122,14 +140,31 @@ export const populate = {
         channelButtonElm.className = 'channel-button';
         channelButtonElm.type = 'button';
         channelButtonElm.addEventListener("click", () => {
-            const channelButtons = document.querySelectorAll('.channel-button');
-                sendHandlers.createThing('channel', 'Untitled channel', groupId);
-            });
-            channelList.append(channelButtonElm);
+            sendHandlers.createThing('channel', 'Untitled channel', groupId);
+        });
+        channelList.append(channelButtonElm);
         
         groupButtonContainerElm.after(channelList);
+    },
+    chatHeaderText : function (groupName, channelName) {
+        element.chatHeaderTitle.textContent = `@ ${groupName} # ${channelName}`;
+        element.chatHeader.classList.remove("hidden");
     }
 };
+
+export const clear = {
+
+    messages : function () {
+        resetOldestMessageIndex();
+        element.messageArea.replaceChildren();
+    },
+    channelList : function () {
+        let existingChannelList = document.querySelector(".channel-list");
+        if (existingChannelList) {
+            existingChannelList.remove();
+        }
+    }
+}
 
 export const getElement = {
     fileForm: function () {
@@ -299,22 +334,19 @@ export function createPopup (form, onSubmit) {
     document.body.appendChild(popup);
 }
 
-function clearMessageView() {
+function hideMessageView() {
     element.messageInputDiv.classList.add("hidden");
-    clearMessages();
 }
 
-function clearChannelList() {
-    let existingChannelList = document.querySelector(".channel-list");
-    if (existingChannelList) {
-        existingChannelList.remove();
-    }
+function hideChatHeader() {    
+    element.chatHeader.classList.add("hidden");
 }
 
 function noChannelSelected() {
-    setChannelId(-1);
-    setGroupId(-1);
-    clearMessageView();
+    session.channelId = -1;
+    session.channelName = "";
+    hideMessageView();
+    hideChatHeader();
 }
 
 export function appendMessage(elm) {
@@ -331,11 +363,6 @@ export function sortMessages() {
     });
     console.log("Sorting messages.")
     element.messageArea.replaceChildren(...nodes);
-}
-
-export function clearMessages() {
-    resetOldestMessageIndex();
-    element.messageArea.replaceChildren();
 }
 
 export function getMessageFieldText() {

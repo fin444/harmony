@@ -80,5 +80,12 @@ export function initializePage () {
             });
         });
 	});
-    console.log("rent user id: ", session.UserId);
+    element.inviteUserButton.addEventListener("click", () => {
+        let form = getElement.textInputForm();
+        createPopup(form, () => {
+            let username = form.dataset.string;
+            sendHandlers.inviteUser(session.groupId, username);
+        });
+    });
+    console.log("Current user id: ", session.userId);
 }

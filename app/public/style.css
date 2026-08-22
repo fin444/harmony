@@ -241,7 +241,6 @@ dialog {
 /* --- CHAT VIEW & MESSAGE VIEW UPDATES --- */
 
 .chat-view {
-    
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -255,10 +254,11 @@ dialog {
     flex-wrap: none;
 }
 
-.message-view-header {
+.chat-header {
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: 10px;
 }
 
 .message-input-div {

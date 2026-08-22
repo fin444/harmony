@@ -10,7 +10,7 @@ const receiveHandlers = {
     },
     validToken:         function (userId) {
         console.log("Valid token message from server");
-        session.curUserId = userId;
+        session.userId = userId;
         initializePage();
     },
     groupList:          function (groups) {
@@ -40,7 +40,7 @@ const receiveHandlers = {
     userInfo:           function (id, name, pfpId) {
         console.log("User info message from server");
         userCache[id] = {id: id, name: name, pfpId: pfpId};
-        updateUserPfp(id)
+        updateUserPfp(id);
     }
 };
 
@@ -85,10 +85,17 @@ export const sendHandlers = {
     },
     deleteThing:    function (thingType, id) {
         let data = {type: 'deleteThing', thingType: thingType, id: id};
+        if(thingType === "group" && session.groupId === id) {
+            session.groupId = -1;
+            session.channelId = -1;
+        }
+        if(thingType === "channel" && session.channelId === id) {
+            session.channelId = -1;
+        }
         socket.send(JSON.stringify(data));
     },
-    inviteUser:     function (groupId, userId) {
-        let data = {type: 'inviteUser', groupId: groupId, userId: userId};
+    inviteUser:     function (groupId, username) {
+        let data = {type: 'inviteUser', groupId: groupId, username: username};
         socket.send(JSON.stringify(data));
     },
 };
