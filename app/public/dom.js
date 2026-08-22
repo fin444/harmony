@@ -293,8 +293,47 @@ export const getElement = {
         if(file) {
             let fileElm = document.createElement("div");
             fileElm.className = "chat-file";
-            // File stuff here
             container.append(fileElm);
+            let fileName;
+            fetch(`/file?token=${session.token}&id=${file}`).then(res => {
+                if (!res.ok) {
+                    throw(res.text());
+                }
+                fileName = res.headers.get("Content-Disposition");
+                fileName = fileName.substring(18, fileName.length - 1);
+                return res.blob();
+            }).then(res => {
+                    if (fileName.endsWith(".png")
+                        || fileName.endsWith(".jpg")
+                        || fileName.endsWith(".jpeg")
+                        || fileName.endsWith(".gif")
+                        || fileName.endsWith(".webp")
+                        || fileName.endsWith(".heif")
+                        || fileName.endsWith(".heic")) {
+                        let image = document.createElement("img");
+                        image.src = window.URL.createObjectURL(res);
+                        image.className = "chat-image-embed";
+                        fileElm.append(image);
+                    } else {
+                        let download = document.createElement("a");
+                        let size;
+                        if (res.size < 1024) {
+                            size = `${res.size} B`
+                        } else if (res.size < 1024*1024) {
+                            size = `${(res.size / 1024).toFixed(2)} KB`
+                        } else {
+                            size = `${(res.size / (1024*1024)).toFixed(2)} MB`
+                        }
+                        download.textContent = `download ${fileName} (${size})`
+                        download.className = "chat-file-download";
+                        download.href = window.URL.createObjectURL(res);
+                        download.download = fileName;
+                        fileElm.append(download);
+                    }
+            }).catch(async err => {
+                console.log("ERROR OCCURRED: ", await err);
+                handler(null);
+            });
         }
 
         return container;
