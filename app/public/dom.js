@@ -181,10 +181,7 @@ export function populateGroupList(groups) {
             selected();
         }
 
-        groupButtonElm.addEventListener("click", () => {
-            selected();
-        });
-
+        groupButtonElm.addEventListener("click", selected());
 
         container.appendChild(groupButtonElm);
         element.groupList.append(container);
@@ -260,9 +257,7 @@ export function populateChannelList(channels, groupId) {
             selected();
         }
 
-        channelButtonElm.addEventListener("click", () => {
-            selected();
-        });
+        channelButtonElm.addEventListener("click", selected());
 
         container.append(channelButtonElm);
         channelList.append(container);
@@ -274,11 +269,10 @@ export function populateChannelList(channels, groupId) {
     channelButtonElm.type = 'button';
     channelButtonElm.addEventListener("click", () => {
         const channelButtons = document.querySelectorAll('.channel-button');
-            sendHandlers.createThing('channel', 'TEST', groupId);
+            sendHandlers.createThing('channel', 'Untitled channel', groupId);
         });
         channelList.append(channelButtonElm);
     
-    // Append the channel list to the group button
     groupButton.after(channelList);
 }
 
