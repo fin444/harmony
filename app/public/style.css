@@ -103,11 +103,27 @@ h1, h2, h3 {
 .sidebar-view {
     z-index: 2;
     display: flex;
-    
+    resize: horizontal;
+    overflow: auto;
     flex-direction: column;
     background-color: var(--bg-secondary);
-    width: 20%;
+    /* width: 20%; */
     min-width: 175px;
+}
+
+.resizer-right {
+  width: 10px;
+  height: 100%;
+  background: #ccc;
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: col-resize; /* Changes cursor to horizontal resize arrow */
+  user-select: none;  /* Prevents text highlighting while dragging */
+}
+
+.resizer-right:hover {
+  background: #8a8a8a;
 }
 
 
@@ -124,7 +140,7 @@ h1, h2, h3 {
     height: 25px;
     aspect-ratio: 1;
     padding: 0;
-    /* border-width: 0; */
+    border-width: 0;
     opacity: 0;
     overflow: hidden;
     pointer-events: none;
@@ -137,6 +153,7 @@ h1, h2, h3 {
     flex-basis: 25px;
     width: 25px;
     opacity: 1;
+    border-width: inherit;
     pointer-events: auto;
     margin-left: 4px;
 }
