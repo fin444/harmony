@@ -57,7 +57,7 @@ export function initHTTP(app) {
 				res.send("server error :(")
 				return
 			}
-			res.append("Content-Disposition", `inline; filename="${getFileName(id)}"`)
+			res.append("Content-Disposition", `inline; filename="${await getFileName(id)}"`)
 			res.send(data)
 		}
 	})
