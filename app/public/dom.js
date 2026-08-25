@@ -261,8 +261,9 @@ export const getElement = {
         });
         return renameButtonElm;
     },
-    messageDiv : function (message, username, userId, timestamp, file, index) {
+    messageDiv : function (id, message, username, userId, timestamp, file, index) {
         let container = document.createElement("div");
+        container.dataset.id = id;
         container.dataset.timestamp = timestamp;
         container.dataset.index = index;
 
