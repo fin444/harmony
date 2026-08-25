@@ -15,6 +15,7 @@ function signout() {
 
 function loadSomeOlderMessages() {
     if (session.oldestMessageIndex <= 1) return;
+    console.log("Scrolled to top! Loading more messages!");
     sendHandlers.getMessages(getChannel(), session.oldestMessageIndex - 1);
 }
 
@@ -50,7 +51,6 @@ export function initializePage () {
         let container = element.chatMessagesContainer;
         const maxScrollUp = container.scrollHeight - container.clientHeight;
         if (Math.abs(container.scrollTop) >= maxScrollUp - 1) {
-            console.log("Scrolled to top! Loading more messages!");
             loadSomeOlderMessages();
         }
         
