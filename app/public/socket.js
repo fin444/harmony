@@ -1,5 +1,5 @@
 import { initializePage } from "./app.js";
-import { session, userCache, addMessageToQueue, processMessageQueue } from "./session.js";
+import { session, userCache, addMessageToQueue, processMessageQueue, getGroup, getChannel } from "./session.js";
 import { populate, updateUserPfp } from "./dom.js";
 
 const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
@@ -18,8 +18,10 @@ const receiveHandlers = {
         populate.groupList(groups);
     },
     groupInfo:          function (groupId, channels) {
-        console.log("Group info message from server. Server Group ID = ", groupId, " Session Group ID = ", session.groupId);
-        if(session.groupId === groupId) {
+        console.log("Group info message from server. Server Group ID = ", groupId, " Session Group ID = ", getGroup());
+        console.log(channels);
+        if(getGroup() === groupId) {
+            console.log("Channel list appending.");
             populate.channelList(channels, groupId);
         }
     },
@@ -27,7 +29,7 @@ const receiveHandlers = {
         console.log("Messages message from server");
         console.log("Channel ID messages received in: ", channelId);
         let reversedMessages = messages.toReversed();
-        if(session.channelId === channelId) {
+        if(getChannel() === channelId) {
             for (let message of reversedMessages) {
                 addMessageToQueue(message);
             }
@@ -35,7 +37,7 @@ const receiveHandlers = {
     },
     typingIndicator:    function (channelId, usersTyping) {
         console.log("Typing indicator message from server");
-        if(session.channelId === channelId) displayTypingIndicator(usersTyping);
+        if(getChannel() === channelId) displayTypingIndicator(usersTyping);
     },
     userInfo:           function (id, name, pfpId) {
         console.log("User info message from server");
@@ -52,8 +54,8 @@ export const sendHandlers = {
     getGroupInfo:   function (id) {
         let data = {type: 'getGroupInfo', id: id};
         socket.send(JSON.stringify(data));
-        console.log("Current group set to ", session.groupId);
-        console.log("Channel ID set", session.channelId);
+        console.log("Current group set to ", getGroup());
+        console.log("Channel ID set", getChannel());
     },
     getMessages:    function (channelId, index) {
         let data = {type: 'getMessages', channelId: channelId, index: index};
@@ -85,12 +87,12 @@ export const sendHandlers = {
     },
     deleteThing:    function (thingType, id) {
         let data = {type: 'deleteThing', thingType: thingType, id: id};
-        if(thingType === "group" && session.groupId === id) {
-            session.groupId = -1;
-            session.channelId = -1;
+        if(thingType === "group" && getGroup() === id) {
+            setGroupId(-1);
+            setChannelId(-1);
         }
-        if(thingType === "channel" && session.channelId === id) {
-            session.channelId = -1;
+        if(thingType === "channel" && getChannel() === id) {
+            setChannelId(-1);
         }
         socket.send(JSON.stringify(data));
     },
