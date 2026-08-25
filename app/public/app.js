@@ -1,6 +1,6 @@
 import { sendHandlers } from "./socket.js";
 import { session, userCache, inChannel, uploadFile, getChannel, getGroup, setChannel, setGroup } from "./session.js";
-import { element, getMessageFieldText, createPopup, getElement } from "./dom.js";
+import { element, getChatInputFieldText, createPopup, getElement } from "./dom.js";
 
 function createGroup(name) {
     console.log("Create group function called with name: ", name);
@@ -24,7 +24,7 @@ export function sendMessage() {
         return;
     }
 
-    let messageText = getMessageFieldText();
+    let messageText = getChatInputFieldText();
     if(messageText === "") {
         console.log("Cannot send message. Nothing in message text field.");
         return;
@@ -46,8 +46,8 @@ export function initializePage () {
     console.log("Initializing page");
     element.userPfp.alt = session.userId;
     element.userPfp.src = pfpLink(session.userId);
-    element.messageArea.addEventListener("scroll", () => {
-        let container = element.messageArea;
+    element.chatMessagesContainer.addEventListener("scroll", () => {
+        let container = element.chatMessagesContainer;
         const maxScrollUp = container.scrollHeight - container.clientHeight;
         if (Math.abs(container.scrollTop) >= maxScrollUp - 1) {
             console.log("Scrolled to top! Loading more messages!");
@@ -55,9 +55,9 @@ export function initializePage () {
         }
         
     });
-    element.chatInputDiv.classList.add("hidden");
+    element.chatInputContainer.classList.add("hidden");
     element.newGroupButton.addEventListener("click", () => createGroup("Untitled group"));
-    element.messageAttachButton.addEventListener("click", () => {
+    element.chatFileAttachButton.addEventListener("click", () => {
         let form = getElement.fileForm();
         createPopup(form, () => {
             uploadFile(form.querySelector("input[type=file]").files[0], (id) => {
@@ -65,9 +65,9 @@ export function initializePage () {
             });
         });
     });
-    element.messageSendButton.addEventListener("click", () => sendMessage());
+    element.chatSendButton.addEventListener("click", () => sendMessage());
     element.signoutButton.addEventListener("click", () => {signout()});
-    element.messageInputField.addEventListener("keydown", (event) => {
+    element.chatInputField.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
             sendMessage();
         }
