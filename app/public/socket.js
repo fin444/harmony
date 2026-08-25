@@ -1,6 +1,6 @@
 import { initializePage } from "./app.js";
 import { session, userCache, addMessageToQueue, processMessageQueue, getGroup, getChannel } from "./session.js";
-import { populate, updateUserPfp } from "./dom.js";
+import { populate, updateUserPfp, deleteMessage } from "./dom.js";
 
 const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
 
@@ -43,6 +43,10 @@ const receiveHandlers = {
         console.log("User info message from server");
         userCache[id] = {id: id, name: name, pfpId: pfpId};
         updateUserPfp(id);
+    },
+    deleteMessage:      function (id) {
+        console.log("message deleted!", id);
+        deleteMessage(id);
     }
 };
 
@@ -136,6 +140,8 @@ socket.addEventListener("message", (event) => {
             receiveHandlers.userInfo(data.id, data.username, data.pfpId);
             processMessageQueue();
             break;
+        case "deleteMessage":
+            receiveHandlers.deleteMessage(data.id);
         default:
             break;
     }

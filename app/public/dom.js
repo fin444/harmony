@@ -266,6 +266,15 @@ export const getElement = {
         container.dataset.id = id;
         container.dataset.timestamp = timestamp;
         container.dataset.index = index;
+        if (userId === session.userId) {
+            container.addEventListener("contextmenu", (e) => {
+                createPopup(getElement.yesOrNoForm("Delete message?"), () => {
+                    console.log("Deleting message with id", id);
+                    sendHandlers.deleteThing("message", id);
+                });
+                e.preventDefault();
+            });
+        }
 
         let messageElm = document.createElement("div");
         messageElm.className = "chat-element-div";
@@ -438,6 +447,15 @@ export function getMessageFieldText() {
     let text = element.messageInputField.value;
     element.messageInputField.value = "";
     return text;
+}
+
+export function deleteMessage(id) {
+    for (const elm of element.messageArea.children) {
+        if (elm.dataset.id === id.toString()) {
+            elm.remove();
+            return;
+        }
+    }
 }
 
 export function updateUserPfp(id) {
