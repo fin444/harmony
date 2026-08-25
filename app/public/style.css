@@ -105,15 +105,15 @@ h1, h2, h3 {
 
 .sidebar-view {
     z-index: 2;
-    flex: 0 0 auto;
+    flex: 0 0 0;
     display: flex;
-    resize: horizontal;
+    /* resize: horizontal; */
     overflow: auto;
     flex-direction: column;
     background-color: var(--bg-secondary);
     /* width: 20%; */
     max-width: 500px;
-    min-width: 175px;
+    min-width: 200px;
 }
 
 
