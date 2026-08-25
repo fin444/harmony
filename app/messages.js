@@ -139,6 +139,7 @@ export const handlers = {
 		broadcast(users, "messages", {
 			channelId: message.channelId,
 			messages: [{
+				id: message.id,
 				index: index,
 				userId: user,
 				contents: message.contents,
