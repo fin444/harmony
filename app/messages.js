@@ -175,7 +175,7 @@ export const handlers = {
 				console.log("user cannot add channel to group because they are not in it", data)
 			}
 		} else {
-			console.log("unknown thingType:", data)
+			console.log("unknown thingType", data)
 		}
 	},
 
@@ -198,6 +198,8 @@ export const handlers = {
 			} else {
 				console.log("user cannot rename channel because they are not in it", data)
 			}
+		} else {
+			console.log("unknown thingType", data)
 		}
 	},
 
@@ -221,6 +223,8 @@ export const handlers = {
 			let group = await db.getChannelGroup(data.id)
 			await db.deleteChannel(data.id)
 			await broadcastGroupInfo(group)
+		} else {
+			console.log("unknown thingType", data)
 		}
 	},
 
