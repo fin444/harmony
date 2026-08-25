@@ -26,8 +26,6 @@ window.addEventListener('pageshow', function(event) {
   }
 });
 
-
-
 function loginFetch(username, password){
     fetch(`/login?username=${username}&password=${password}`, {
         method: 'GET', 
