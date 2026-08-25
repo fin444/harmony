@@ -223,6 +223,14 @@ export const handlers = {
 			let group = await db.getChannelGroup(data.id)
 			await db.deleteChannel(data.id)
 			await broadcastGroupInfo(group)
+		} else if (data.thingType === "message") {
+			let message = await db.getMessage(data.id)
+			if (message.userId !== user) {
+				console.log("user cannot delete message because they are not in it", data)
+				return
+			}
+			await db.deleteMessage(data.id)
+			await broadcast(await db.getChannelUsers(message.channelId), "deleteMessage", {id: data.id})
 		} else {
 			console.log("unknown thingType", data)
 		}

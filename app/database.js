@@ -154,6 +154,12 @@ export const db = {
 			[userId, channelId, fileId, contents, timestamp]
 		)).rows[0]
 	},
+	getMessage: async function(id) {
+		return (await pool.query(
+			`select * from "message" where "id" = $1`,
+			[id]
+		)).rows[0]
+	},
 	getMessageIndex: async function(id) {
 		return (await pool.query(
 			`select "index" from (
@@ -174,5 +180,8 @@ export const db = {
 				order by "query"."index" desc limit $3`,
 			[channelId, index === null || index === undefined ? Number.MAX_SAFE_INTEGER : index, count]
 		)).rows
+	},
+	deleteMessage: async function(id) {
+		await pool.query(`delete from "message" where "id" = $1`, [id])
 	}
 }
