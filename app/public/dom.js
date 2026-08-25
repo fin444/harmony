@@ -1,4 +1,4 @@
-import { setChannelId, setGroupId, resetOldestMessageIndex, session } from "./session.js";
+import { setGroup, setChannel, getGroup, getChannel, resetOldestMessageIndex, session } from "./session.js";
 import { sendHandlers } from "./socket.js";
 import { pfpLink } from "./app.js";
 
@@ -10,7 +10,7 @@ export const element = {
     chatHeaderTitle : document.getElementById("chat-header-text"),
     inviteUserButton : document.getElementById("invite-user"),
     groupHeaderTitle : document.getElementById("group-header-text"),
-    messageInputDiv : document.getElementById("input"),
+    chatInputDiv : document.getElementById("input"),
     messageAttachButton : document.getElementById("attach"),
     messageInputField : document.getElementById("type"),
     messageSendButton : document.getElementById("send"),
@@ -20,8 +20,9 @@ export const element = {
 
 export const populate = {
     groupList : function (groups) {
-        hideMessageView();
-        element.groupList.replaceChildren();   
+        hideChat();
+        element.groupList.replaceChildren();
+
         for(let group of groups) {
             let container = document.createElement("div");
             container.className = ("list-button-container");
@@ -36,10 +37,10 @@ export const populate = {
             let renameButtonElm = getElement.renameButton(group, "group");
             let deleteButtonElm = getElement.deleteButton(group, "group");
             deleteButtonElm.addEventListener('click', () => {
-                if(session.groupId === group.id) {
-                    session.groupId = -1;
-                    session.channelId = -1;
-                    noChannelSelected();
+                if(getGroup() === group.id) {
+                    setGroup(-1);
+                    setChannel(-1);
+                    deselectAnyChannel();
                 }
             });
 
@@ -48,18 +49,17 @@ export const populate = {
                 groupButtons.forEach(b => b.classList.remove('is-selected'));
                 groupButtonElm.classList.toggle('is-selected');
                 sendHandlers.getGroupInfo(group.id);
-                setGroupId(group.id);
+                setGroup(group.id);
             }
 
             function deselect() {
                 groupButtonElm.classList.remove('is-selected');
-                noChannelSelected();
+                deselectAnyChannel();
                 clear.channelList();
             }
 
-            let alreadyCurrent = session.groupId === group.id;
+            let alreadyCurrent = getGroup() === group.id;
             if(alreadyCurrent) select();
-            else groupButtonElm.classList.remove('is-selected');
             groupButtonElm.addEventListener("click", () => {
                 if(groupButtonElm.classList.contains('is-selected')) {
                     deselect();
@@ -74,8 +74,9 @@ export const populate = {
         }
     },
     channelList : function (channels, groupId) {
-        hideMessageView();
+        hideChat();
         clear.channelList();
+
         let channelList = document.createElement("div");
         channelList.className = "channel-list";
 
@@ -95,9 +96,9 @@ export const populate = {
             let renameButtonElm = getElement.renameButton(channel, "channel");
             let deleteButtonElm = getElement.deleteButton(channel, "channel");
             deleteButtonElm.addEventListener('click', () => {
-                if(session.channelId === channel.id) {
-                    session.channelId = -1;
-                    noChannelSelected();
+                if(getChannel() === channel.id) {
+                    setChannel(-1);
+                    deselectAnyChannel();
                 }
             });
 
@@ -105,23 +106,26 @@ export const populate = {
                 const channelButtons = document.querySelectorAll('.channel-button');
                 channelButtons.forEach(b => b.classList.remove('is-selected'));
                 channelButtonElm.classList.toggle('is-selected');
-                session.channelId = channel.id;
-                clear.messages();
-                element.messageInputDiv.classList.remove("hidden");
-                sendHandlers.getMessages(channel.id, null);
+
+                setChannel(channel.id);
                 session.groupName = groupButtonContainerElm.querySelector(".group-button").textContent.substring(2);
                 session.channelName = channel.name;
+
+                clear.messages();
+                element.chatInputDiv.classList.remove("hidden");
+                sendHandlers.getMessages(channel.id, null);
                 populate.chatHeaderText(session.groupName, session.channelName);
+
+                showChat();
             }
 
             function deselect() {
                 channelButtonElm.classList.remove('is-selected');
-                noChannelSelected();
+                hideChat();
             }
 
-            let alreadyCurrent = session.channelId === channel.id;
+            let alreadyCurrent = getChannel() === channel.id;
             if(alreadyCurrent) select();
-            else channelButtonElm.classList.remove('is-selected');
             channelButtonElm.addEventListener("click", () => {
                 if(channelButtonElm.classList.contains('is-selected')) {
                     deselect();
@@ -146,19 +150,18 @@ export const populate = {
         
         groupButtonContainerElm.after(channelList);
     },
-    chatHeaderText : function (groupName, channelName) {
+    chatHeaderText: function (groupName, channelName) {
         element.chatHeaderTitle.textContent = `@ ${groupName} # ${channelName}`;
-        element.chatHeader.classList.remove("hidden");
     }
 };
 
 export const clear = {
-
     messages : function () {
         resetOldestMessageIndex();
         element.messageArea.replaceChildren();
     },
     channelList : function () {
+        clear.messages();
         let existingChannelList = document.querySelector(".channel-list");
         if (existingChannelList) {
             existingChannelList.remove();
@@ -373,19 +376,45 @@ export function createPopup (form, onSubmit) {
     document.body.appendChild(popup);
 }
 
-function hideMessageView() {
-    element.messageInputDiv.classList.add("hidden");
+function hideChatInput() {
+    element.chatInputDiv.classList.add("hidden");
 }
 
 function hideChatHeader() {    
     element.chatHeader.classList.add("hidden");
 }
 
-function noChannelSelected() {
-    session.channelId = -1;
-    session.channelName = "";
-    hideMessageView();
+function hideChatMessages() {    
+    element.messageArea.classList.add("hidden");
+}
+
+function showChatInput() {
+    element.chatInputDiv.classList.remove("hidden");
+}
+
+function showChatHeader() {
+    element.chatHeader.classList.remove("hidden");
+}
+
+function showChatMessages() {
+    element.messageArea.classList.remove("hidden");
+}
+
+function deselectAnyChannel() {
+    setChannel(-1);
+    hideChat();
+}
+
+function hideChat() {
+    hideChatInput();
+    hideChatMessages();
     hideChatHeader();
+}
+
+function showChat() {
+    showChatInput();
+    showChatMessages();
+    showChatHeader();
 }
 
 export function appendMessage(elm) {

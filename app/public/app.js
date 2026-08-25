@@ -1,5 +1,5 @@
 import { sendHandlers } from "./socket.js";
-import { session, userCache, inChannel, uploadFile } from "./session.js";
+import { session, userCache, inChannel, uploadFile, getChannel, getGroup, setChannel, setGroup } from "./session.js";
 import { element, getMessageFieldText, createPopup, getElement } from "./dom.js";
 
 function createGroup(name) {
@@ -15,7 +15,7 @@ function signout() {
 
 function loadSomeOlderMessages() {
     if (session.oldestMessageIndex <= 1) return;
-    sendHandlers.getMessages(session.channelId, session.oldestMessageIndex - 1);
+    sendHandlers.getMessages(getChannel(), session.oldestMessageIndex - 1);
 }
 
 export function sendMessage() {
@@ -30,8 +30,8 @@ export function sendMessage() {
         return;
     }
 
-    console.log("Sending message in channel ", session.channelId, ": ", messageText);
-    sendHandlers.sendMessage(session.channelId, messageText, session.messageFileId);
+    console.log("Sending message in channel ", getChannel(), ": ", messageText);
+    sendHandlers.sendMessage(getChannel(), messageText, session.messageFileId);
 }
 
 export function pfpLink(userId) {
@@ -55,7 +55,7 @@ export function initializePage () {
         }
         
     });
-    element.messageInputDiv.classList.add("hidden");
+    element.chatInputDiv.classList.add("hidden");
     element.newGroupButton.addEventListener("click", () => createGroup("Untitled group"));
     element.messageAttachButton.addEventListener("click", () => {
         let form = getElement.fileForm();
@@ -84,7 +84,7 @@ export function initializePage () {
         let form = getElement.textInputForm();
         createPopup(form, () => {
             let username = form.dataset.string;
-            sendHandlers.inviteUser(session.groupId, username);
+            sendHandlers.inviteUser(getGroup(), username);
         });
     });
     console.log("Current user id: ", session.userId);

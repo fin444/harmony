@@ -3,11 +3,10 @@ import { sendHandlers } from "./socket.js";
 
 
 export const session = {
+    url: new URL(window.location.href),
     userId: -1,
     userName: "",
-    groupId: -1,
     groupName: "",
-    channelId: -1,
     channelName: "",
     oldestMessageIndex: -1,
     token: null,
@@ -22,15 +21,29 @@ export let groupList = [];
 export let channelList = [];
 
 export function inChannel() {
-    return session.channelId > 0;
+    return getChannel() >= 0;
 }
 
-export function setGroupId(id) {
-    session.groupId = id;
+export function setGroup(id) {
+    session.url.searchParams.set('group', id);
+    window.history.pushState({}, '', session.url);
 }
 
-export function setChannelId(id) {
-    session.channelId = id;
+export function setChannel(id) {
+    session.url.searchParams.set('channel', id);
+    window.history.pushState({}, '', session.url);
+}
+
+export function getGroup() {
+    let ret = Number(session.url.searchParams.get('group'));
+    console.log("getGroup() is returning ", ret);
+    return ret ? ret : -1;
+}
+
+export function getChannel() {
+    let ret = Number(session.url.searchParams.get('channel'));
+    console.log("getChannel() is returning ", ret);
+    return ret ? ret : -1;
 }
 
 export function resetOldestMessageIndex(){

@@ -60,6 +60,9 @@ button:active{
 
 }
 
+img {
+    border-radius: 15px;
+}
 
 
 *, *::before, *::after {
