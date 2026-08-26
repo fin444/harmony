@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Disclone</title>
     <style>
-      * {
-        /* border: 1px solid red; */
-        
-      }
       input {
         margin: 0px;
         height: 30px;
@@ -39,17 +35,14 @@
           <h3 id="chat-header-text"></h3>
           <button id="invite-user" class="invite-button" title="Invite user">Invite user</button>
         </header>
-        <div id="messages" class="message-view"></div>
-        <div id="input" class="message-input-div">
+        <div id="messages" class="chat-all-messages-container"></div>
+        <div id="input" class="chat-input-div">
           <button id="attach" class="attach-button">+</button>
           <input id="type" placeholder="Message" class="type-box" type="text"></input>
           <button id="send" class="send-button">Send</button>
         </div>
       </div>
-
     </div>
-    
-
   </body>
 	
   <script type="module" src="socket.js"></script>

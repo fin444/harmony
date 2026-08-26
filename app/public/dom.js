@@ -261,7 +261,9 @@ export const getElement = {
     },
     messageDiv : function (id, message, username, userId, timestamp, file, index) {
         let container = document.createElement("div");
+        container.className = "chat-message-container";
         container.dataset.id = id;
+        container.dataset.userId = userId;
         container.dataset.timestamp = timestamp;
         container.dataset.index = index;
         if (userId === session.userId) {
@@ -274,32 +276,35 @@ export const getElement = {
             });
         }
 
-        let messageElm = document.createElement("div");
-        messageElm.className = "chat-element-div";
-
-        let timestampElm = document.createElement("p");
-        timestampElm.className = "chat-timestamp";
-        let dateTime = new Date(timestamp);
-        timestampElm.textContent = dateTime.toLocaleTimeString();
-        messageElm.append(timestampElm);
+        let chatMessage = document.createElement("div");
+        chatMessage.className = "chat-message-div";
 
         let pfpElm = document.createElement("img");
-        pfpElm.className = "chat-profile-pic";
+        pfpElm.className = "chat-message-profile-pic";
         pfpElm.src = pfpLink(userId);
         pfpElm.alt = userId;
-        messageElm.append(pfpElm);
+        chatMessage.append(pfpElm);
 
         let usernameElm = document.createElement("p");
-        usernameElm.className = "chat-username";
+        usernameElm.className = "chat-message-username";
         usernameElm.textContent = username;
-        messageElm.append(usernameElm);
+        chatMessage.append(usernameElm);
+
+        let timestampElm = document.createElement("p");
+        timestampElm.className = "chat-message-timestamp";
+        let dateTime = new Date(timestamp);
+        timestampElm.textContent = dateTime.toLocaleTimeString([], {
+            hour: "numeric",
+            minute: "2-digit"
+        });
+        chatMessage.append(timestampElm);
 
         let bodyElm = document.createElement("p");
-        bodyElm.className = "chat-message";
+        bodyElm.className = "chat-message-body";
         bodyElm.textContent = message;
-        messageElm.append(bodyElm);
+        chatMessage.append(bodyElm);
 
-        container.append(messageElm);
+        container.append(chatMessage);
 
         if(file) {
             let fileElm = document.createElement("div");
@@ -442,13 +447,50 @@ export function deleteMessage(id) {
     }
 }
 
-export function sortMessages() {
+function cascadeDuplicateUsersInChat() {
+    console.log("Cascading message styles.");
+    let chatMessages = element.chatMessagesContainer.children;
+    for(let i = 0; i < chatMessages.length; i++) {
+        let messageHeader = chatMessages[i].querySelector(".chat-message-div");
+        let profilePicture = messageHeader.querySelector(".chat-message-profile-pic");
+        let username = messageHeader.querySelector(".chat-message-username");
+        let timestamp = messageHeader.querySelector(".chat-message-timestamp");
+        
+        let nextMessage = chatMessages[i + 1];
+        if(nextMessage && chatMessages[i].dataset.userId === nextMessage.dataset.userId) {
+            profilePicture.classList.add("hidden");
+            username.classList.add("hidden");
+            timestamp.classList.add("chat-message-timestamp-cascaded");
+        }
+    }
+}
+
+function deleteDuplicateMessages() {
+    console.log("Deleting duplicate messages.");
+    let chatMessages = element.chatMessagesContainer.children;
+    for(let i = 0; i < chatMessages.length; i++) {
+        let nextMessage = chatMessages[i + 1];
+        if(nextMessage && chatMessages[i].dataset.id === nextMessage.dataset.id) {
+            nextMessage.remove();
+        }
+    }
+}
+
+function sortMessages() {
+    console.log("Sorting messages.");
     const nodes = [...element.chatMessagesContainer.children].sort((a, b) => {
-        return String(b.dataset.timestamp).localeCompare(String(a.dataset.timestamp));
+    return String(b.dataset.timestamp).localeCompare(String(a.dataset.timestamp));
     });
-    console.log("Sorting messages.")
     element.chatMessagesContainer.replaceChildren(...nodes);
 }
+
+export function fixMessages() {
+    sortMessages();
+    deleteDuplicateMessages();
+    cascadeDuplicateUsersInChat();
+}
+
+
 
 export function getChatInputFieldText() {
     let text = element.chatInputField.value;

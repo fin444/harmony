@@ -1,4 +1,4 @@
-import { getElement, prependMessage, sortMessages } from "./dom.js";
+import { getElement, prependMessage, fixMessages } from "./dom.js";
 import { sendHandlers } from "./socket.js";
 
 
@@ -114,5 +114,5 @@ export function processMessageQueue() {
         event.execute();
         messageQueue.shift();
     }
-    sortMessages();
+    fixMessages();
 }
