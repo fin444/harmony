@@ -330,6 +330,7 @@ dialog {
     font-size: var(--chat-font-size);
     color: rgb(0, 132, 255);
     font-weight: bold;
+    margin-left: 10px;
 }
 .chat-message-username:hover {
     cursor: pointer;
