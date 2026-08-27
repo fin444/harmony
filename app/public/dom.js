@@ -4,25 +4,23 @@ import { pfpLink } from "./app.js";
 
 export const element = {
     groupList : document.getElementById("group-list"),
+    newGroupButton : document.getElementById("new-group"),
     userPfp : document.getElementById("profile-image"),
     signoutButton : document.getElementById("sign-out"),
     chatHeader : document.getElementById("chat-header"),
     chatHeaderTitle : document.getElementById("chat-header-text"),
     inviteUserButton : document.getElementById("invite-user"),
-    groupHeaderTitle : document.getElementById("group-header-text"),
-    chatInputDiv : document.getElementById("input"),
-    messageAttachButton : document.getElementById("attach"),
-    messageInputField : document.getElementById("type"),
-    messageSendButton : document.getElementById("send"),
-    messageArea : document.getElementById("messages"),
-    newGroupButton : document.getElementById("new-group"),
+    chatInputContainer : document.getElementById("input"),
+    chatFileAttachButton : document.getElementById("attach"),
+    chatInputField : document.getElementById("type"),
+    chatSendButton : document.getElementById("send"),
+    chatMessagesContainer : document.getElementById("messages"),
 };
 
 export const populate = {
     groupList : function (groups) {
         hideChat();
         element.groupList.replaceChildren();
-
         for(let group of groups) {
             let container = document.createElement("div");
             container.className = ("list-button-container");
@@ -112,7 +110,7 @@ export const populate = {
                 session.channelName = channel.name;
 
                 clear.messages();
-                element.chatInputDiv.classList.remove("hidden");
+                element.chatInputContainer.classList.remove("hidden");
                 sendHandlers.getMessages(channel.id, null);
                 populate.chatHeaderText(session.groupName, session.channelName);
 
@@ -158,7 +156,7 @@ export const populate = {
 export const clear = {
     messages : function () {
         resetOldestMessageIndex();
-        element.messageArea.replaceChildren();
+        element.chatMessagesContainer.replaceChildren();
     },
     channelList : function () {
         clear.messages();
@@ -261,11 +259,14 @@ export const getElement = {
         });
         return renameButtonElm;
     },
-    messageDiv : function (id, message, username, userId, timestamp, file, index) {
+    messageDiv : function (id, body, username, userId, timestamp, index, file = null, replyMessageId = null) {
         let container = document.createElement("div");
+        container.className = "chat-message-container";
         container.dataset.id = id;
+        container.dataset.userId = userId;
         container.dataset.timestamp = timestamp;
         container.dataset.index = index;
+
         if (userId === session.userId) {
             container.addEventListener("contextmenu", (e) => {
                 createPopup(getElement.yesOrNoForm("Delete message?"), () => {
@@ -276,32 +277,59 @@ export const getElement = {
             });
         }
 
-        let messageElm = document.createElement("div");
-        messageElm.className = "chat-element-div";
+        if (replyMessageId) {
+            let replyMessage = findMessageElmById(replyMessageId).querySelector(".chat-message-div");
 
-        let timestampElm = document.createElement("p");
-        timestampElm.className = "chat-timestamp";
-        let dateTime = new Date(timestamp);
-        timestampElm.textContent = dateTime.toLocaleTimeString();
-        messageElm.append(timestampElm);
+            let replyContainer = document.createElement("div");
+            replyContainer.className = "chat-reply-container";
+
+            let replyText = document.createElement("p");
+            replyText.className = "chat-message-body";
+            replyText.textContent = "Reply to: ";
+            replyContainer.append(replyText);
+
+            let otherUsername = document.createElement("p");
+            otherUsername.className = "chat-message-username";
+            otherUsername = replyMessage.querySelector(".chat-message-username");
+            replyContainer.append(otherUsername);
+
+            let otherBody = document.createElement("p");
+            otherBody.className = "chat-message-body";
+            otherBody = replyMessage.querySelector(".chat-message-body");
+            replyContainer.append(otherBody);
+
+            container.append(replyContainer);
+        }
+
+        let chatMessage = document.createElement("div");
+        chatMessage.className = "chat-message-div";
 
         let pfpElm = document.createElement("img");
-        pfpElm.className = "chat-profile-pic";
+        pfpElm.className = "chat-message-profile-pic";
         pfpElm.src = pfpLink(userId);
         pfpElm.alt = userId;
-        messageElm.append(pfpElm);
+        chatMessage.append(pfpElm);
 
         let usernameElm = document.createElement("p");
-        usernameElm.className = "chat-username";
+        usernameElm.className = "chat-message-username";
         usernameElm.textContent = username;
-        messageElm.append(usernameElm);
+        chatMessage.append(usernameElm);
+
+        let timestampElm = document.createElement("p");
+        timestampElm.className = "chat-message-timestamp";
+        let dateTime = new Date(timestamp);
+        timestampElm.textContent = dateTime.toLocaleTimeString([], {
+            hour: "numeric",
+            minute: "2-digit"
+        });
+        chatMessage.append(timestampElm);
 
         let bodyElm = document.createElement("p");
-        bodyElm.className = "chat-message";
-        bodyElm.textContent = message;
-        messageElm.append(bodyElm);
+        bodyElm.className = "chat-message-body";
+        bodyElm.textContent = body;
+        chatMessage.append(bodyElm);
 
-        container.append(messageElm);
+        container.append(chatMessage);
 
         if(file) {
             let fileElm = document.createElement("div");
@@ -387,7 +415,7 @@ export function createPopup (form, onSubmit) {
 }
 
 function hideChatInput() {
-    element.chatInputDiv.classList.add("hidden");
+    element.chatInputContainer.classList.add("hidden");
 }
 
 function hideChatHeader() {    
@@ -395,11 +423,11 @@ function hideChatHeader() {
 }
 
 function hideChatMessages() {    
-    element.messageArea.classList.add("hidden");
+    element.chatMessagesContainer.classList.add("hidden");
 }
 
 function showChatInput() {
-    element.chatInputDiv.classList.remove("hidden");
+    element.chatInputContainer.classList.remove("hidden");
 }
 
 function showChatHeader() {
@@ -407,7 +435,7 @@ function showChatHeader() {
 }
 
 function showChatMessages() {
-    element.messageArea.classList.remove("hidden");
+    element.chatMessagesContainer.classList.remove("hidden");
 }
 
 function deselectAnyChannel() {
@@ -428,34 +456,74 @@ function showChat() {
 }
 
 export function appendMessage(elm) {
-    element.messageArea.append(elm);
+    element.chatMessagesContainer.append(elm);
 }
 
 export function prependMessage(elm) {
-    element.messageArea.prepend(elm);
-}
-
-export function sortMessages() {
-    const nodes = [...element.messageArea.children].sort((a, b) => {
-        return String(b.dataset.timestamp).localeCompare(String(a.dataset.timestamp));
-    });
-    console.log("Sorting messages.")
-    element.messageArea.replaceChildren(...nodes);
-}
-
-export function getMessageFieldText() {
-    let text = element.messageInputField.value;
-    element.messageInputField.value = "";
-    return text;
+    element.chatMessagesContainer.prepend(elm);
 }
 
 export function deleteMessage(id) {
-    for (const elm of element.messageArea.children) {
+    findMessageElmById(id).remove();
+}
+
+export function findMessageElmById(id) {
+    for (const elm of element.chatMessagesContainer.children) {
         if (elm.dataset.id === id.toString()) {
-            elm.remove();
-            return;
+            return elm;
         }
     }
+}
+
+function cascadeDuplicateUsersInChat() {
+    console.log("Cascading message styles.");
+    let chatMessages = element.chatMessagesContainer.children;
+    for(let i = 0; i < chatMessages.length; i++) {
+        let messageHeader = chatMessages[i].querySelector(".chat-message-div");
+        let profilePicture = messageHeader.querySelector(".chat-message-profile-pic");
+        let username = messageHeader.querySelector(".chat-message-username");
+        let timestamp = messageHeader.querySelector(".chat-message-timestamp");
+        
+        let nextMessage = chatMessages[i + 1];
+        if(nextMessage && chatMessages[i].dataset.userId === nextMessage.dataset.userId) {
+            profilePicture.classList.add("hidden");
+            username.classList.add("hidden");
+            timestamp.classList.add("chat-message-timestamp-cascaded");
+        }
+    }
+}
+
+function clearDuplicateMessages() {
+    console.log("Deleting duplicate messages.");
+    let chatMessages = element.chatMessagesContainer.children;
+    for(let i = 0; i < chatMessages.length; i++) {
+        let nextMessage = chatMessages[i + 1];
+        if(nextMessage && chatMessages[i].dataset.id === nextMessage.dataset.id) {
+            nextMessage.remove();
+        }
+    }
+}
+
+function sortMessages() {
+    console.log("Sorting messages.");
+    const nodes = [...element.chatMessagesContainer.children].sort((a, b) => {
+    return String(b.dataset.timestamp).localeCompare(String(a.dataset.timestamp));
+    });
+    element.chatMessagesContainer.replaceChildren(...nodes);
+}
+
+export function fixMessages() {
+    sortMessages();
+    clearDuplicateMessages();
+    cascadeDuplicateUsersInChat();
+}
+
+
+
+export function getChatInputFieldText() {
+    let text = element.chatInputField.value;
+    element.chatInputField.value = "";
+    return text;
 }
 
 export function updateUserPfp(id) {

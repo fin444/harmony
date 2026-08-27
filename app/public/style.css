@@ -11,10 +11,19 @@
     --accent-color: #60a5fa;
     --header-margin: 10px;
     --chat-font-size: 14px;
+    --timestamp-opacity: 0%;
     
     background-color: var(--bg-primary);
     color: var(--text-primary);
 }
+
+.logo {
+  width: 48px;
+  aspect-ratio: 1;
+  height: auto;
+  object-fit: contain;
+}
+
 
 *:focus-visible {
     outline: 1.5px solid #fafbfb42;
@@ -84,6 +93,10 @@ body {
 h1, h2, h3 {
     text-align: left;
     margin-left: var(--header-margin);
+}
+
+.login-content {
+    width: max-content;
 }
 
 .left-vert-align {
@@ -222,6 +235,8 @@ h1, h2, h3 {
 }
 
 .sidebar-footer-pfp {
+    width: 30px;
+    height: 30px;
     margin-left: 10px;
 }
 
@@ -249,7 +264,7 @@ dialog {
     flex-direction: column;
 }
 
-.message-view {
+.chat-all-messages-container {
     display: flex;
     flex-direction: column-reverse;
     flex: 1; 
@@ -264,7 +279,7 @@ dialog {
     gap: 10px;
 }
 
-.message-input-div {
+.chat-input-div {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -273,12 +288,10 @@ dialog {
     flex-direction: row;
     flex-wrap: nowrap;
 }
-
 .type-box {
     font-size: var(--chat-font-size);
     flex: 1;
 }
-
 .send-button {
     flex: 0 0 auto;
     background-color: var(--accent-color);
@@ -286,49 +299,58 @@ dialog {
 }
 
 
-.chat-element-div {
+.chat-message-container:hover {
+    background-color: var(--elm-highlight-color);
+    --timestamp-opacity: 100%;
+}
+.chat-message-div {
+    margin-left: 10px;
     display: flex;
     align-items: center;
     gap: 10px;
     flex-direction: row;
 } 
-.chat-element-div:hover {
-    background-color: var(--elm-highlight-color);
-}
 
-
-.chat-timestamp {
+.chat-message-timestamp, .chat-message-timestamp-cascaded {
     font-size: 10px;
     color: gray;
-    margin-left: 10px;
+    margin-left: 0px;
 }
-.chat-message {
+.chat-message-timestamp-cascaded {
+    width: 50px;
+    opacity: var(--timestamp-opacity);
+    text-align: center;
+}
+
+.chat-message-body {
     font-size: var(--chat-font-size);
 }
 
-.chat-username {
+.chat-message-username {
+    font-size: var(--chat-font-size);
     color: rgb(0, 132, 255);
+    font-weight: bold;
+    margin-left: 10px;
 }
-.chat-username:hover {
+.chat-message-username:hover {
     cursor: pointer;
     text-decoration: underline;
 }
-
-
-
-.chat-profile-pic {
+.chat-message-profile-pic {
     width: 30px;
     height: 30px;
     aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: 50%;
+    margin-left: 10px;
 }
-.chat-profile-pic:hover {
+.chat-message-profile-pic:hover {
     cursor: pointer;
 }
 
 .chat-image-embed {
     margin-left: 10px;
+    margin-bottom: 10px;
     max-height: 40vh;
 }
 .chat-file-download {
@@ -338,12 +360,12 @@ dialog {
     text-align: center;
 }
 
+
 table {
     border: 1px black solid;
     border-collapse: collapse;
     margin: 10px;
 }
-
 
 .hidden {
   display: none;
@@ -358,3 +380,7 @@ table {
     --accent-color: #60a5fa;
   }
 }
+
+/* * {
+    border: solid red 1px;
+} */

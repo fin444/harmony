@@ -1,4 +1,4 @@
-import { getElement, prependMessage, sortMessages } from "./dom.js";
+import { getElement, prependMessage, fixMessages } from "./dom.js";
 import { sendHandlers } from "./socket.js";
 
 
@@ -10,7 +10,8 @@ export const session = {
     channelName: "",
     oldestMessageIndex: -1,
     token: null,
-    messageFileId: null
+    messageFileId: null,
+    messageReplyId: null
 };
 
 
@@ -68,7 +69,7 @@ export function addMessageToQueue(message){
             }
             let userMatch = userCache[this.message.userId];
             let username = userMatch ? userMatch.name : "Unknown";
-            let messageDiv = getElement.messageDiv(this.message.id, this.message.contents, username, this.message.userId, this.message.timestamp, this.message.fileId, this.message.index);
+            let messageDiv = getElement.messageDiv(this.message.id, this.message.contents, username, this.message.userId, this.message.timestamp, this.message.index, this.message.fileId, this.message.replyMessageId);
             prependMessage(messageDiv);
             
         }
@@ -114,5 +115,5 @@ export function processMessageQueue() {
         event.execute();
         messageQueue.shift();
     }
-    sortMessages();
+    fixMessages();
 }
