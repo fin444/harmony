@@ -259,13 +259,14 @@ export const getElement = {
         });
         return renameButtonElm;
     },
-    messageDiv : function (id, message, username, userId, timestamp, file, index) {
+    messageDiv : function (id, body, username, userId, timestamp, index, file = null, replyMessageId = null) {
         let container = document.createElement("div");
         container.className = "chat-message-container";
         container.dataset.id = id;
         container.dataset.userId = userId;
         container.dataset.timestamp = timestamp;
         container.dataset.index = index;
+
         if (userId === session.userId) {
             container.addEventListener("contextmenu", (e) => {
                 createPopup(getElement.yesOrNoForm("Delete message?"), () => {
@@ -274,6 +275,30 @@ export const getElement = {
                 });
                 e.preventDefault();
             });
+        }
+
+        if (replyMessageId) {
+            let replyMessage = findMessageElmById(replyMessageId).querySelector(".chat-message-div");
+
+            let replyContainer = document.createElement("div");
+            replyContainer.className = "chat-reply-container";
+
+            let replyText = document.createElement("p");
+            replyText.className = "chat-message-body";
+            replyText.textContent = "Reply to: ";
+            replyContainer.append(replyText);
+
+            let otherUsername = document.createElement("p");
+            otherUsername.className = "chat-message-username";
+            otherUsername = replyMessage.querySelector(".chat-message-username");
+            replyContainer.append(otherUsername);
+
+            let otherBody = document.createElement("p");
+            otherBody.className = "chat-message-body";
+            otherBody = replyMessage.querySelector(".chat-message-body");
+            replyContainer.append(otherBody);
+
+            container.append(replyContainer);
         }
 
         let chatMessage = document.createElement("div");
@@ -301,7 +326,7 @@ export const getElement = {
 
         let bodyElm = document.createElement("p");
         bodyElm.className = "chat-message-body";
-        bodyElm.textContent = message;
+        bodyElm.textContent = body;
         chatMessage.append(bodyElm);
 
         container.append(chatMessage);
@@ -439,10 +464,13 @@ export function prependMessage(elm) {
 }
 
 export function deleteMessage(id) {
+    findMessageElmById(id).remove();
+}
+
+export function findMessageElmById(id) {
     for (const elm of element.chatMessagesContainer.children) {
         if (elm.dataset.id === id.toString()) {
-            elm.remove();
-            return;
+            return elm;
         }
     }
 }
@@ -465,7 +493,7 @@ function cascadeDuplicateUsersInChat() {
     }
 }
 
-function deleteDuplicateMessages() {
+function clearDuplicateMessages() {
     console.log("Deleting duplicate messages.");
     let chatMessages = element.chatMessagesContainer.children;
     for(let i = 0; i < chatMessages.length; i++) {
@@ -486,7 +514,7 @@ function sortMessages() {
 
 export function fixMessages() {
     sortMessages();
-    deleteDuplicateMessages();
+    clearDuplicateMessages();
     cascadeDuplicateUsersInChat();
 }
 
