@@ -1,4 +1,4 @@
-import { getElement, prependMessage, fixMessages } from "./dom.js";
+import { getElement, prependMessage, fixMessages, getChatInputFieldText } from "./dom.js";
 import { sendHandlers } from "./socket.js";
 
 
@@ -11,7 +11,8 @@ export const session = {
     oldestMessageIndex: -1,
     token: null,
     messageFileId: null,
-    messageReplyId: null
+    messageReplyId: null,
+    announcedTypingStatus: false
 };
 
 
@@ -31,8 +32,16 @@ export function setGroup(id) {
 }
 
 export function setChannel(id) {
+    if (session.announcedTypingStatus) {
+        sendHandlers.typingStatus(getChannel(), false);
+        session.announcedTypingStatus = false;
+    }
     session.url.searchParams.set('channel', id);
     window.history.pushState({}, '', session.url);
+    if (getChatInputFieldText(false).length !== 0) {
+        sendHandlers.typingStatus(getChannel(), true);
+        session.announcedTypingStatus = true;
+    }
 }
 
 export function getGroup() {
