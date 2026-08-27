@@ -147,11 +147,11 @@ export const db = {
 	},
 
 	// message
-	addMessage: async function(userId, channelId, fileId, contents, timestamp) {
+	addMessage: async function(userId, channelId, fileId, contents, reply, timestamp) {
 		return (await pool.query(
-			`insert into "message"("userId", "channelId", "fileId", "contents", "timestamp")
-				values($1, $2, $3, $4, $5) returning *`,
-			[userId, channelId, fileId, contents, timestamp]
+			`insert into "message"("userId", "channelId", "fileId", "contents", "reply", "timestamp")
+				values($1, $2, $3, $4, $5, $6) returning *`,
+			[userId, channelId, fileId, contents, reply, timestamp]
 		)).rows[0]
 	},
 	getMessage: async function(id) {

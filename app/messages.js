@@ -7,7 +7,7 @@ export const specs = {
 	getGroupInfo: {id: "id"},
 	getMessages: {channelId: "id", index: "int?"},
 	typingStatus: {channelId: "id", isTyping: "bool"},
-	sendMessage: {channelId: "id", contents: "str", fileId: "id?"},
+	sendMessage: {channelId: "id", contents: "str", fileId: "id?", reply: "id?"},
 	getUserInfo: {id: "id"},
 	setPfp: {fileId: "id"},
 	createThing: {thingType: "str", name: "str", groupId: "id?"},
@@ -127,11 +127,24 @@ export const handlers = {
 			return
 		}
 
+		if (Number.isInteger(data.reply)) {
+			let reply = await db.getMessage(data.reply);
+			if (reply === undefined) {
+				console.log("can't reply to message that doesn't exist", data)
+				return
+			}
+			if (reply.channelId != data.channelId) {
+				console.log("can't reply to message in a different channel", data)
+				return
+			}
+		}
+
 		let message = await db.addMessage(
 			user,
 			data.channelId,
 			(data.fileId === null || data.fileId === undefined) ? null : data.fileId,
 			data.contents,
+			(data.reply === null || data.reply === undefined) ? null : data.reply,
 			Date.now()
 		)
 		let index = await db.getMessageIndex(message.id)
@@ -144,6 +157,7 @@ export const handlers = {
 				userId: user,
 				contents: message.contents,
 				fileId: message.fileId,
+				reply: message.reply,
 				timestamp: message.timestamp
 			}]
 		})
