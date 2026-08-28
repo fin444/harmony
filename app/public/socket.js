@@ -1,6 +1,6 @@
 import { initializePage } from "./app.js";
 import { session, userCache, addMessageToQueue, processMessageQueue, getGroup, getChannel } from "./session.js";
-import { populate, updateUserPfp, deleteMessage } from "./dom.js";
+import { populate, updateUserPfp, deleteMessage, displayTypingIndicator } from "./dom.js";
 
 const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
 
@@ -37,7 +37,12 @@ const receiveHandlers = {
     },
     typingIndicator:    function (channelId, usersTyping) {
         console.log("Typing indicator message from server");
-        if(getChannel() === channelId) displayTypingIndicator(usersTyping);
+        if (usersTyping.includes(session.userId)) {
+            usersTyping.splice(usersTyping.indexOf(session.userId), 1);
+        }
+        if (getChannel() === channelId) {
+            displayTypingIndicator(usersTyping);
+        }
     },
     userInfo:           function (id, name, pfpId) {
         console.log("User info message from server");
@@ -65,8 +70,8 @@ export const sendHandlers = {
         let data = {type: 'getMessages', channelId: channelId, index: index};
         socket.send(JSON.stringify(data));
     },
-    typingStatus:   function (isTyping) {
-        let data = {type: 'typingStatus', isTyping: isTyping};
+    typingStatus:   function (channelId, isTyping) {
+        let data = {type: 'typingStatus', channelId: channelId, isTyping: isTyping};
         socket.send(JSON.stringify(data));
     },
     sendMessage:    function (channelId, contents, fileId) {

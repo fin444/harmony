@@ -1,4 +1,4 @@
-import { setGroup, setChannel, getGroup, getChannel, resetOldestMessageIndex, session } from "./session.js";
+import { setGroup, setChannel, getGroup, getChannel, resetOldestMessageIndex, session, userCache } from "./session.js";
 import { sendHandlers } from "./socket.js";
 import { pfpLink } from "./app.js";
 
@@ -15,6 +15,7 @@ export const element = {
     chatInputField : document.getElementById("type"),
     chatSendButton : document.getElementById("send"),
     chatMessagesContainer : document.getElementById("messages"),
+    typingIndicator : document.getElementById("typing-indicator"),
 };
 
 export const populate = {
@@ -520,10 +521,43 @@ export function fixMessages() {
 
 
 
-export function getChatInputFieldText() {
+export function getChatInputFieldText(clear) {
     let text = element.chatInputField.value;
-    element.chatInputField.value = "";
+    if (clear) {
+        element.chatInputField.value = "";
+        if (session.announcedTypingStatus) {
+            sendHandlers.typingStatus(getChannel(), false);
+            session.announcedTypingStatus = false;
+        }
+    }
     return text;
+}
+
+export function displayTypingIndicator(usersTyping) {
+    if (usersTyping.length === 0) {
+        element.typingIndicator.textContent = "no one is typing";
+    } else {
+        let added = 0, str = "";
+        for (let u of usersTyping) {
+            if (u in userCache) {
+                if (added === 0) {
+                    str = userCache[u].name;
+                    added++;
+                } else if (added !== 3) {
+                    str += ", " + userCache[u].name;
+                    added++;
+                }
+            } else {
+                sendHandlers.getUserInfo(u);
+            }
+        }
+        if (added !== usersTyping.length) {
+            str += " and " + (usersTyping.length - added) + " others are typing...";
+        } else {
+            str += " are typing...";
+        }
+        element.typingIndicator.textContent = str;
+    }
 }
 
 export function updateUserPfp(id) {

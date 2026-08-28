@@ -25,7 +25,7 @@ export function sendMessage() {
         return;
     }
 
-    let messageText = getChatInputFieldText();
+    let messageText = getChatInputFieldText(true);
     if(messageText === "") {
         console.log("Cannot send message. Nothing in message text field.");
         return;
@@ -72,14 +72,27 @@ export function initializePage () {
             sendMessage();
         }
     });
-	element.userPfp.addEventListener("click", () => {
+    element.chatInputField.addEventListener("input", (event) => {
+        if (getChatInputFieldText(false).length === 0) {
+            if (session.announcedTypingStatus) {
+                sendHandlers.typingStatus(getChannel(), false);
+                session.announcedTypingStatus = false;
+            }
+        } else {
+            if (!session.announcedTypingStatus) {
+                sendHandlers.typingStatus(getChannel(), true);
+                session.announcedTypingStatus = true;
+            }
+        }
+    });
+    element.userPfp.addEventListener("click", () => {
         let form = getElement.fileForm();
         createPopup(form, () => {
             uploadFile(form.querySelector("input[type=file]").files[0], (id) => {
-				sendHandlers.setPfp(id);
+                sendHandlers.setPfp(id);
             });
         });
-	});
+    });
     element.inviteUserButton.addEventListener("click", () => {
         let form = getElement.textInputForm();
         createPopup(form, () => {
