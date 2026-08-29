@@ -74,8 +74,8 @@ export const sendHandlers = {
         let data = {type: 'typingStatus', channelId: channelId, isTyping: isTyping};
         socket.send(JSON.stringify(data));
     },
-    sendMessage:    function (channelId, contents, fileId) {
-        let data = {type: 'sendMessage', channelId: channelId, contents: contents, fileId: fileId};
+    sendMessage:    function (channelId, contents, fileId, replyId) {
+        let data = {type: 'sendMessage', channelId: channelId, contents: contents, fileId: fileId, reply: replyId};
         socket.send(JSON.stringify(data));
     },
     getUserInfo:    function (id) {

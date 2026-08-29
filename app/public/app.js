@@ -1,6 +1,6 @@
 import { sendHandlers } from "./socket.js";
 import { session, userCache, inChannel, uploadFile, getChannel, getGroup, setChannel, setGroup } from "./session.js";
-import { element, getChatInputFieldText, createPopup, getElement } from "./dom.js";
+import { element, getChatInputFieldText, createPopup, getElement, hideContextMenus, clear } from "./dom.js";
 
 function createGroup(name) {
     console.log("Create group function called with name: ", name);
@@ -26,13 +26,16 @@ export function sendMessage() {
     }
 
     let messageText = getChatInputFieldText(true);
-    if(messageText === "") {
-        console.log("Cannot send message. Nothing in message text field.");
+    if(messageText === "" && session.messageFileId === null) {
+        console.log("Cannot send message. Nothing in text field and no file attached.");
         return;
     }
 
     console.log("Sending message in channel ", getChannel(), ": ", messageText);
-    sendHandlers.sendMessage(getChannel(), messageText, session.messageFileId);
+    sendHandlers.sendMessage(getChannel(), messageText, session.messageFileId, session.messageReplyId);
+    session.messageReplyId = null;
+    clear.replyContainer();
+
 }
 
 export function pfpLink(userId) {
@@ -99,6 +102,14 @@ export function initializePage () {
             let username = form.dataset.string;
             sendHandlers.inviteUser(getGroup(), username);
         });
+    });
+    document.addEventListener('click', function (event) {
+        const contextMenus = document.getElementsByClassName('context-menu');
+        for (let menu of contextMenus) {
+            if (!menu.contains(event.target)) {
+                hideContextMenus();
+            }
+        }
     });
     console.log("Current user id: ", session.userId);
 }
