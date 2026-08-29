@@ -15,9 +15,9 @@ const server = createServer(app)
 const wss = new WebSocketServer({server})
 
 // webserver content
-app.use(express.static(path.join(import.meta.dirname, "public")))
 app.use(express.raw({limit: "10mb"}))
 initHTTP(app)
+app.use(express.static(path.join(import.meta.dirname, "public")))
 initWebsocket(wss)
 
 // launch webserver

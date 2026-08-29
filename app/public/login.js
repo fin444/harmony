@@ -69,8 +69,8 @@ function signupFetch(username, password){
 }
 
 function appFetch(token) {
-
-    window.location.href = `/app?token=${token}`;
+    document.cookie = `token=${token}`;
+    window.location.href = "/app";
 }
 
 
