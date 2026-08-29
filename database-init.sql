@@ -40,7 +40,7 @@ create table "message" (
 	"channelId" integer not null references "channel"("id"),
 	"fileId" integer references "file"("id"),
 	"contents" varchar(512) not null,
-	"reply" integer references "message"("id"),
+	"reply" integer,
 	"timestamp" int8 not null
 );
 
