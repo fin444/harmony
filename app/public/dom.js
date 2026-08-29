@@ -159,6 +159,7 @@ export const clear = {
     messages : function () {
         resetOldestMessageIndex();
         element.chatMessagesContainer.replaceChildren();
+        element.typingIndicator.classList.add("hidden");
     },
     channelList : function () {
         clear.messages();
@@ -205,7 +206,7 @@ export const getElement = {
             replyContainer.prepend(clearButton);
             let replyText = replyContainer.querySelector(".reply-text");
             replyText.textContent = "↪ Replying to:";
-            element.chatFooter.prepend(replyContainer);
+            element.chatFooter.insertBefore(replyContainer, element.chatFooter.children[1]);
             session.messageReplyId = id;
         });
         return button;
@@ -500,6 +501,7 @@ function deselectAnyChannel() {
 }
 
 function hideChat() {
+    element.typingIndicator.classList.add("hidden");
     hideChatInput();
     hideChatMessages();
     hideChatHeader();
@@ -575,8 +577,6 @@ export function fixMessages() {
     cascadeDuplicateUsersInChat();
 }
 
-
-
 export function getChatInputFieldText(clear) {
     let text = element.chatInputField.value;
     if (clear) {
@@ -590,30 +590,38 @@ export function getChatInputFieldText(clear) {
 }
 
 export function displayTypingIndicator(usersTyping) {
-    if (usersTyping.length === 0) {
-        element.typingIndicator.textContent = "no one is typing";
-    } else {
-        let added = 0, str = "";
-        for (let u of usersTyping) {
-            if (u in userCache) {
-                if (added === 0) {
-                    str = userCache[u].name;
-                    added++;
-                } else if (added !== 3) {
-                    str += ", " + userCache[u].name;
-                    added++;
-                }
-            } else {
-                sendHandlers.getUserInfo(u);
-            }
-        }
-        if (added !== usersTyping.length) {
-            str += " and " + (usersTyping.length - added) + " others are typing...";
-        } else {
-            str += " are typing...";
-        }
-        element.typingIndicator.textContent = str;
+    const activeTypers = usersTyping.filter(id => id !== session.userId);
+    if (activeTypers.length === 0) {
+        element.typingIndicator.classList.add("hidden");
+        return;
     }
+    element.typingIndicator.classList.remove("hidden");
+    const cachedNames = [];
+    let uncachedCount = 0;
+    for (const u of activeTypers) {
+        if (u in userCache) {
+            if (cachedNames.length < 3) {
+                cachedNames.push(userCache[u].name);
+            }
+        } else {
+            uncachedCount++;
+            sendHandlers.getUserInfo(u);
+        }
+    }
+
+    let str = "";
+    if (cachedNames.length > 0) {
+        str = cachedNames.join(", ");
+        const remaining = activeTypers.length - cachedNames.length;
+        if (remaining > 0) {
+            str += ` and ${remaining} other${remaining > 1 ? "s" : ""}`;
+        }
+    } else {
+        str = `${activeTypers.length} user${activeTypers.length > 1 ? "s" : ""}`;
+    }
+
+    str += ` ${activeTypers.length === 1 ? "is" : "are"} typing...`;
+    element.typingIndicator.textContent = str;
 }
 
 export function updateUserPfp(id) {

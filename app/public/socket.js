@@ -41,7 +41,7 @@ const receiveHandlers = {
             usersTyping.splice(usersTyping.indexOf(session.userId), 1);
         }
         if (getChannel() === channelId) {
-            displayTypingIndicator(usersTyping);
+            const timeoutId = setTimeout(() => {displayTypingIndicator(usersTyping);}, 200);
         }
     },
     userInfo:           function (id, name, pfpId) {

@@ -35,20 +35,18 @@
       <div id="chat" class="chat-view">
         <!-- Chat Header -->
         <header class="chat-header hidden" id="chat-header">
-          <div>
-            <h3 id="chat-header-text"></h3>
-            <p id="typing-indicator">no one is typing</p>
-          </div>
+          <h3 id="chat-header-text"></h3>
           <button id="invite-user" class="invite-button" title="Invite user">Invite user</button>
         </header>
         <div id="messages" class="chat-all-messages-container"></div>
-        <div id="chat-footer" class="chat-footer">
+        <footer id="chat-footer" class="chat-footer">
+          <div id="typing-indicator" class="typing-indicator hidden"> typing...</div>
           <div id="input" class="chat-input-container">
             <button id="attach" class="attach-button">+</button>
             <input id="type" placeholder="Message" class="type-box" type="text"></input>
             <button id="send" class="send-button">Send</button>
           </div>
-        </div>
+        </footer>
       </div>
     </div>
   </body>
