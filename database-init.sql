@@ -24,7 +24,8 @@ create table "user" (
 
 create table "group_user" (
 	"userId" integer not null references "user"("id"),
-	"groupId" integer not null references "group"("id")
+	"groupId" integer not null references "group"("id"),
+	constraint "prevent_dupes" unique("userId", "groupId")
 );
 
 create table "channel" (
@@ -39,6 +40,7 @@ create table "message" (
 	"channelId" integer not null references "channel"("id"),
 	"fileId" integer references "file"("id"),
 	"contents" varchar(512) not null,
+	"reply" integer,
 	"timestamp" int8 not null
 );
 

@@ -1,5 +1,6 @@
 import express from "express"
 import {createServer} from "http"
+import path from "node:path"
 import {WebSocketServer} from "ws"
 
 import {db} from "./database.js"
@@ -14,8 +15,9 @@ const server = createServer(app)
 const wss = new WebSocketServer({server})
 
 // webserver content
-app.use(express.static("public"))
+app.use(express.raw({limit: "10mb"}))
 initHTTP(app)
+app.use(express.static(path.join(import.meta.dirname, "public")))
 initWebsocket(wss)
 
 // launch webserver

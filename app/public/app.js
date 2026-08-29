@@ -1,331 +1,116 @@
-// Socket stuff
-
-const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
-
-const receiveHandlers = {
-    invalidToken:       function () {
-        window.location.href = "/";
-    },
-    validToken:         function (userId) {
-        console.log("Valid token message from server");
-        curUserId = userId;
-        initializePage();
-    },
-    groupList:          function (groups) {
-        console.log("Group list message from server");
-        populateGroupList(groups);
-    },
-    groupInfo:          function (id, channels) {
-        console.log("Group info message from server");
-        if(curGroupId === id) {
-            // populateChannelList(channels);
-        }
-        // TEMPORARY TEST
-        // curChannelId = 0;
-        // console.log("Channel ID set", curChannelId);
-    },
-    messages:           function (channelId, messages) {
-        console.log("Messages message from server");
-        console.log("Channel ID messages received in: ", channelId);
-        if(curChannelId === channelId) {
-            for (let message of messages) {
-                eventQueue.push({
-                    message: message,
-                    requestSent: false,
-                    dataReady: function () {
-                        return userCache[this.message.userId] !== undefined;
-                    },
-                    requestData: function () {
-                        this.requestSent = true;
-                        sendHandlers.getUserInfo(this.message.userId);
-                    },
-                    execute: function () {
-                        this.requestSent = false;
-                        let userMatch = userCache[this.message.userId];
-                        let username = userMatch ? userMatch.name : "Unknown";
-                        let messageDiv = getMessageDiv(this.message.contents, username, ownerPfp, this.message.fileId);
-                        messageAreaElm.prepend(messageDiv);
-                    }
-                });
-            }
-        }
-    },
-    typingIndicator:    function (channelId, usersTyping) {
-        console.log("Typing indicator message from server");
-        if(curChannelId === channelId) displayTypingIndicator(usersTyping);
-    },
-    userInfo:           function (id, name, pfpId) {
-        console.log("User info message from server");
-        if(id === curUserId) {
-            // Set profile pfp, etc.
-        }
-        userCache[id] = {id: id, name: name, pfpId: pfpId};
-        processEventQueue();
-    }
-};
-
-const sendHandlers = {
-    token:          function (tok) {
-        let data = {type: 'token', token: tok};
-        socket.send(JSON.stringify(data));
-    },
-    getGroupInfo:   function (id) {
-        let data = {type: 'getGroupInfo', id: id};
-        // socket.send(JSON.stringify(data));
-        curChannelId = 1; // Baked in test
-        console.log("Current group set to ", curGroupId);
-        console.log("Channel ID set", curChannelId);
-        sendHandlers.getMessages(curChannelId, -1);
-    },
-    getMessages:    function (channelId, index) {
-        let data = {type: 'getMessages', channelId: channelId, index: index};
-        socket.send(JSON.stringify(data));
-    },
-    typingStatus:   function (isTyping) {
-        let data = {type: 'typingStatus', isTyping: isTyping};
-        socket.send(JSON.stringify(data));
-    },
-    sendMessage:    function (channelId, contents, fileId) {
-        let data = {type: 'sendMessage', channelId: channelId, contents: contents, fileId: fileId};
-        socket.send(JSON.stringify(data));
-    },
-    getUserInfo:    function (id) {
-        let data = {type: 'getUserInfo', id: id};
-        socket.send(JSON.stringify(data));
-    },
-    setPfp:         function (fileId) {
-        let data = {type: 'setPfp', fileId: fileId};
-        socket.send(JSON.stringify(data));
-    },
-    createThing:    function (thingType, name) {
-        let data = {type: 'createThing', thingType: thingType, name: name};
-        socket.send(JSON.stringify(data));
-    },
-    renameThing:    function (thingType, id, name) {
-        let data = {type: 'renameThing', thingType: thingType, id: id, name: name};
-        socket.send(JSON.stringify(data));
-    },
-    deleteThing:    function (thingType, id) {
-        let data = {type: 'deleteThing', thingType: thingType, id: id};
-        socket.send(JSON.stringify(data));
-    },
-    inviteUser:     function (groupId, userId) {
-        let data = {type: 'inviteUser', groupId: groupId, userId: userId};
-        socket.send(JSON.stringify(data));
-    },
-};
-
-
-socket.addEventListener('open', () => {
-  console.log('WebSocket connected');
-  let urlParams = new URLSearchParams(window.location.search);
-  sendHandlers.token(urlParams.get('token'));
-});
-
-socket.addEventListener("message", (event) => {
-    let data = JSON.parse(event.data);
-    console.log("message from server:", data)
-    switch (data.type) {
-        case "invalidToken":
-            receiveHandlers.invalidToken();
-            break;
-        case "validToken":
-            receiveHandlers.validToken(data.userId);
-            break;
-        case "groupList":
-            receiveHandlers.groupList(data.groups);
-            break;
-        case "groupInfo":
-            receiveHandlers.groupInfo(data.id, data.channels);
-            break;
-        case "messages":
-            receiveHandlers.messages(data.channelId, data.messages);
-            break;
-        case "typingIndicator":
-            receiveHandlers.typingIndicator(data.channelId, data.usersTyping);
-            break;
-        case "userInfo":
-            receiveHandlers.userInfo(data.id, data.username, data.pfpId);
-            break;
-        default:
-            break;
-    }
-    processEventQueue();
-});
-
-// Constants
-
-
-const groupListElm = document.getElementById("group-list");
-const curUserPfp = document.getElementById("profile-image");
-
-const channelListElm = document.getElementById("channel-list");
-
-const groupHeaderTextElm = document.getElementById("group-header-text");
-const messageInputFieldElm = document.getElementById("type");
-const messageSendButtonElm = document.getElementById("send");
-
-const messageAreaElm = document.getElementById("messages");
-const newGroupButtonElm = document.getElementById("new-group");
-
-// Variables
-let eventQueue = [];
-let userCache = {};
-let curUserId = -1;
-let curGroupId = -1;
-let curChannelId = -1;
-let groupList = [];
-let channelList = [];
-
-
-let ownerPfp = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOaa8Hmv8r-hqG31BpFaSI-AlPdkFTnIeLHNbKgJVTYCRsm3zMR28O8nMT&s=10";
-let ownerUsername = "test_curuser";
-let otherPfp = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOaa8Hmv8r-hqG31BpFaSI-AlPdkFTnIeLHNbKgJVTYCRsm3zMR28O8nMT&s=10";
-let otherUsername = "test_other"
-
-// Functions
-
-function processEventQueue() {
-    for (let event of eventQueue) {
-        // let event = eventQueue[i];
-        if (!event.dataReady()) {
-            if (!event.requestSent) event.requestData();
-            return;
-        }
-        event.execute();
-        eventQueue.pop(0);
-    }
-}
-
-function getFormattedDate(date) {
-    return date.toLocaleTimeString('en-US', {
-        hour12: true,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-    });
-}
-
-function populateGroupList(groups) { 
-    groupListElm.replaceChildren();   
-    for(let group of groups) {
-        let groupButtonElm = document.createElement("button");
-        groupButtonElm.textContent = "ID: " + group.id + " " + group.name;
-        groupButtonElm.className = 'sidebar-content-button';
-        groupButtonElm.dataset.groupId = group.id;
-        groupButtonElm.type = 'button';
-        groupButtonElm.addEventListener("click", () => {
-            const groupButtons = document.querySelectorAll('.sidebar-content-button');
-            groupButtons.forEach(b => b.classList.remove('is-selected'));
-            groupButtonElm.classList.toggle('is-selected');
-            const groupId = group.id;
-            curGroupId = groupId;
-            sendHandlers.getGroupInfo(groupId);
-        });
-        groupListElm.append(groupButtonElm);
-    }
-}
-function populateChannelList(channels) {
-    channelListElm.replaceChildren();   
-    for(let channel of channels) {
-        let channelButtonElm = document.createElement("button");
-        channelButtonElm.textContent = channel.name;
-        channelButtonElm.className = 'sidebar-content-button';
-        channelButtonElm.dataset.channelId = channel.id;
-        //add listener
-        channelListElm.append(channelButtonElm);
-    }
-}
-
-function populateMessages(messages) {
-    for(let message of messages) {
-        
-    }
-}
-
-function clearMessages() {
-    messageAreaElm.replaceChildren();
-}
-
-
-function setChatView(chatName, messages) {
-
-    
-}
+import { sendHandlers } from "./socket.js";
+import { session, userCache, inChannel, uploadFile, getChannel, getGroup, setChannel, setGroup } from "./session.js";
+import { element, getChatInputFieldText, createPopup, getElement, hideContextMenus, clear } from "./dom.js";
 
 function createGroup(name) {
     console.log("Create group function called with name: ", name);
     sendHandlers.createThing("group", name);
 }
 
+function signout() {
+    document.cookie = "token=deleted";
+    window.location.href = "/";
 
-function getMessageDiv(message, username, pfpUrl, timestamp, file) {
-    let parentElm = document.createElement("div");
-    parentElm.className = "chat-element-div";
-
-    let timestampElm = document.createElement("p");
-    timestampElm.className = "chat-timestamp";
-    timestampElm.textContent = timestamp;
-
-    let bodyElm = document.createElement("p");
-    bodyElm.className = "chat-message";
-    bodyElm.textContent = message;
-
-    let usernameElm = document.createElement("p");
-    usernameElm.className = "chat-username";
-    usernameElm.textContent = username;
-
-    let pfpElm = document.createElement("img");
-    pfpElm.className = "chat-profile-pic";
-    pfpElm.src = pfpUrl;
-
-    // TODO: FILE ATTACHMENTS
-
-    parentElm.append(timestampElm);
-    parentElm.append(pfpElm);
-    parentElm.append(usernameElm);
-    parentElm.append(bodyElm);
-
-    return parentElm;
 }
 
-function sendMessage() {
-    if (curChannelId < 0) {
+function loadSomeOlderMessages() {
+    if (session.oldestMessageIndex <= 1) return;
+    console.log("Scrolled to top! Loading more messages!");
+    sendHandlers.getMessages(getChannel(), session.oldestMessageIndex - 1);
+}
+
+export function sendMessage() {
+    if (!inChannel()) {
         console.log("Cannot send message. Not currently in a channel.");
         return;
     }
-    let messageText = messageInputFieldElm.value;
-    messageInputFieldElm.value = "";
-    
-    if(messageText === "") {
-        console.log("Cannot send message. Nothing in message text field.");
+
+    let messageText = getChatInputFieldText(true);
+    if(messageText === "" && session.messageFileId === null) {
+        console.log("Cannot send message. Nothing in text field and no file attached.");
         return;
     }
 
-    console.log("Sending message in channel ", curChannelId, ": ", messageText);
+    console.log("Sending message in channel ", getChannel(), ": ", messageText);
+    sendHandlers.sendMessage(getChannel(), messageText, session.messageFileId, session.messageReplyId);
+    session.messageReplyId = null;
+    session.messageFileId = null;
+    clear.replyContainer();
 
-    sendHandlers.sendMessage(curChannelId, messageText, null);
-    sendHandlers.getMessages(curChannelId, -1);
 }
 
-function initializePage () {
+export function pfpLink(userId) {
+    if (userId in userCache) {
+        return `/file?id=${userCache[userId].pfpId}`;
+    } else {
+        return "";
+    }
+}
+
+export function initializePage () {
     console.log("Initializing page");
-    curUserPfp.src = ownerPfp;
-    newGroupButtonElm.addEventListener("click", () => createGroup("test"));
-    messageSendButtonElm.addEventListener("click", () => sendMessage());
-    messageInputFieldElm.addEventListener("keydown", (event) => {
+    element.userPfp.alt = session.userId;
+    element.userPfp.src = pfpLink(session.userId);
+    element.chatMessagesContainer.addEventListener("scroll", () => {
+        let container = element.chatMessagesContainer;
+        const maxScrollUp = container.scrollHeight - container.clientHeight;
+        if (Math.abs(container.scrollTop) >= maxScrollUp - 1) {
+            loadSomeOlderMessages();
+        }
+        
+    });
+    element.chatInputContainer.classList.add("hidden");
+    element.newGroupButton.addEventListener("click", () => createGroup("Untitled group"));
+    element.chatFileAttachButton.addEventListener("click", () => {
+        let form = getElement.fileForm();
+        createPopup(form, () => {
+            uploadFile(form.querySelector("input[type=file]").files[0], (id) => {
+                session.messageFileId = id;
+            });
+        });
+    });
+    element.chatSendButton.addEventListener("click", () => sendMessage());
+    element.signoutButton.addEventListener("click", () => {signout()});
+    element.chatInputField.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
             sendMessage();
         }
     });
-    console.log("Current user id: ", curUserId);
-
-
+    element.chatInputField.addEventListener("input", (event) => {
+        if (getChatInputFieldText(false).length === 0) {
+            if (session.announcedTypingStatus) {
+                sendHandlers.typingStatus(getChannel(), false);
+                session.announcedTypingStatus = false;
+            }
+        } else {
+            if (!session.announcedTypingStatus) {
+                sendHandlers.typingStatus(getChannel(), true);
+                session.announcedTypingStatus = true;
+            }
+        }
+    });
+    element.userPfp.addEventListener("click", () => {
+        let form = getElement.fileForm();
+        createPopup(form, () => {
+            uploadFile(form.querySelector("input[type=file]").files[0], (id) => {
+                sendHandlers.setPfp(id);
+            });
+        });
+    });
+    element.inviteUserButton.addEventListener("click", () => {
+        let form = getElement.textInputForm();
+        createPopup(form, () => {
+            let username = form.dataset.string;
+            sendHandlers.inviteUser(getGroup(), username);
+        });
+    });
+    document.addEventListener('click', function (event) {
+        const contextMenus = document.getElementsByClassName('context-menu');
+        for (let menu of contextMenus) {
+            if (!menu.contains(event.target)) {
+                hideContextMenus();
+            }
+        }
+    });
+    console.log("Current user id: ", session.userId);
 }
-
-
-
-// Event listeners
-
-
-

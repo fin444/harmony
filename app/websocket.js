@@ -19,6 +19,20 @@ export function broadcast(userList, type, data) {
 	}
 }
 
+export async function broadcastAdaptive(userList, type, fn) {
+	for (let num in users) {
+		if (userList.includes(users[num])) {
+			send(sockets[num], type, await fn(users[num]))
+		}
+	}
+}
+
+export function broadcastAll(type, data) {
+	for (let num in users) {
+		send(sockets[num], type, data)
+	}
+}
+
 export function send(socket, type, data) {
 	socket.send(JSON.stringify({type: type, ...data}))
 }

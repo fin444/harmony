@@ -3,13 +3,16 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Disclone</title>
+    <title>Harmony - Login</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
   </head>
-  <body>
-    <h1>Disclone</h1>
-    <h2>Login</h2>
-    <form class="left-vert-align">
+  <body style="display: flex; flex-direction: column; place-items: center; justify-content: center; padding-bottom: 70px;">
+        <header style="margin-left: 10px; display: flex; flex-direction: row; align-items: center;">
+            <div class="logo-icon"></div>
+            <h2>Harmony</h2>
+        </header>    <div class="login-content">
+      <p style="font-size: 14px; margin-left: 10px; text-align: center;">Chat with your friends!</p>
+      <form class="left-vert-align">
       <input 
         name="Username" 
         type="text" 
@@ -33,7 +36,8 @@
         Sign Up</button>
       </div>
       <p style="font-size: 12px;" id="state"></p>
-    </form>
+      </form>
+    </div>
 
   </body>
 	<script src="login.js"></script>
