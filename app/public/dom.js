@@ -313,16 +313,18 @@ export const getElement = {
 
         let replyText = document.createElement("p");
         replyText.className = "chat-message-body reply-text";
+        replyText.style = "font-size: 10px;";
         replyText.textContent = "↪ Reply to:";
         replyContainer.append(replyText);
 
         let referencedUsername = document.createElement("p");
         referencedUsername.className = "chat-message-username";
-        referencedUsername.style = "margin-right: 10px;"
+        referencedUsername.style = "margin-right: 10px; font-size: 10px;";
         replyContainer.append(referencedUsername);
 
         let referencedBody = document.createElement("p");
         referencedBody.className = "chat-message-body";
+        referencedBody.style = "font-size: 10px;";
         replyContainer.append(referencedBody);
 
         let referencedMessage = findMessageElmById(replyMessageId)?.querySelector(".chat-message-div");

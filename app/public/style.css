@@ -10,7 +10,7 @@
     --button-highlight-color: rgb(from var(--text-primary) r g b / 0.4);
     --accent-color: #60a5fa;
     --header-margin: 10px;
-    --chat-font-size: 14px;
+    --chat-font-size: 12px;
     --timestamp-opacity: 0%;
     
     background-color: var(--bg-primary);
@@ -428,17 +428,16 @@ dialog {
 }
 
 .chat-message-body {
-    
     font-size: var(--chat-font-size);
-    font-size: inherit;
+    /* font-size: inherit; */
 }
 
 .chat-message-username {
     font-size: var(--chat-font-size);
-    color: rgb(0, 132, 255);
+    color: var(--text-primary);
     font-weight: bold;
     margin-left: 10px;
-    font-size: inherit;
+    /* font-size: inherit; */
 }
 .chat-message-username:hover {
     cursor: pointer;
@@ -457,7 +456,7 @@ dialog {
 }
 
 .chat-image-embed {
-    margin-left: 10px;
+    margin-left: 70px;
     margin-bottom: 10px;
     max-height: 40vh;
 }
