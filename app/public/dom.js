@@ -400,7 +400,7 @@ export const getElement = {
             fileElm.className = "chat-file";
             container.append(fileElm);
             let fileName;
-            fetch(`/file?token=${session.token}&id=${file}`).then(res => {
+            fetch(`/file?id=${file}`).then(res => {
                 if (!res.ok) {
                     throw(res.text());
                 }

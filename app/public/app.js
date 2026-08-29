@@ -8,7 +8,7 @@ function createGroup(name) {
 }
 
 function signout() {
-    // TODO: clear token from cookie
+    document.cookie = "token=deleted";
     window.location.href = "/";
 
 }
@@ -41,7 +41,7 @@ export function sendMessage() {
 
 export function pfpLink(userId) {
     if (userId in userCache) {
-        return `/file?token=${session.token}&id=${userCache[userId].pfpId}`;
+        return `/file?id=${userCache[userId].pfpId}`;
     } else {
         return "";
     }

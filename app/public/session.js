@@ -9,7 +9,6 @@ export const session = {
     groupName: "",
     channelName: "",
     oldestMessageIndex: -1,
-    token: null,
     messageFileId: null,
     messageReplyId: null,
     announcedTypingStatus: false
@@ -89,7 +88,7 @@ export function addMessageToQueue(message){
 export function uploadFile(file, handler) {
     let reader = new FileReader();
     reader.onload = (e) => {
-        fetch(`/file?token=${session.token}&name=${file.name}`, {
+        fetch(`/file?name=${file.name}`, {
             method: "PUT",
             body: e.target.result,
             headers: {"Content-Type": "application/octet-stream"}

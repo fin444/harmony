@@ -17,16 +17,9 @@ async function handleLogin(query, res, fn, errText) {
 	}
 }
 
-function validateToken(token, res) {
-	if (typeof token !== "string") {
-		res.statusCode = 400
-		res.send("Bad request")
-		return false
-	}
-
-	if (tokenUser(token) === undefined) {
-		res.statusCode = 401
-		res.send("Access denied")
+function validateToken(req, res) {
+	let token = req.get("Cookie")?.split("; ")?.find((row) => row.startsWith("token="))?.split("=")[1]
+	if (typeof token !== "string" || tokenUser(token) === undefined) {
 		return false
 	} else {
 		return true
@@ -34,17 +27,28 @@ function validateToken(token, res) {
 }
 
 export function initHTTP(app) {
+	app.get("/", (req, res) => {
+		if (validateToken(req, res)) {
+			res.redirect("/app")
+		} else {
+			res.append("Set-Cookie", "token=deleted")
+			res.sendFile(import.meta.dirname + "/public/index.html")
+		}
+	})
+
 	app.get("/login", (req, res) => handleLogin(req.query, res, tryLogin, "Invalid credential(s)"))
 	app.get("/signup", (req, res) => handleLogin(req.query, res, trySignup, "Account already exists"))
 
 	app.get("/app", (req, res) => {
-		if (validateToken(req.query.token, res)) {
+		if (validateToken(req, res)) {
 			res.sendFile(import.meta.dirname + "/public/app.html")
+		} else {
+			res.redirect("/")
 		}
 	})
 
 	app.get("/file", async function(req, res) {
-		if (validateToken(req.query.token, res)) {
+		if (validateToken(req, res)) {
 			if (typeof req.query.id !== "string") {
 				res.statusCode = 400
 				res.send("bad request")
@@ -59,11 +63,14 @@ export function initHTTP(app) {
 			}
 			res.append("Content-Disposition", `inline; filename="${await getFileName(id)}"`)
 			res.send(data)
+		} else {
+			res.statusCode = 401
+			res.send("not logged in")
 		}
 	})
 
 	app.put("/file", async function(req, res) {
-		if (await validateToken(req.query.token, res)) {
+		if (await validateToken(req, res)) {
 			if (typeof req.query.name !== "string" || req.body === undefined) {
 				res.statusCode = 400
 				res.send("bad request")
@@ -83,6 +90,9 @@ export function initHTTP(app) {
 				res.statusCode = 200
 				res.send(result)
 			}
+		} else {
+			res.statusCode = 401
+			res.send("not logged in")
 		}
 	})
 }

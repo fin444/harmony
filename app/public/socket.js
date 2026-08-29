@@ -113,9 +113,8 @@ export const sendHandlers = {
 
 socket.addEventListener('open', () => {
     console.log('WebSocket connected');
-    let urlParams = new URLSearchParams(window.location.search);
-    session.token = urlParams.get('token');
-    sendHandlers.token(session.token);
+    let token = document.cookie.split("; ")?.find((row) => row.startsWith("token="))?.split("=")[1];
+    sendHandlers.token(token);
 });
 
 socket.addEventListener("message", (event) => {
