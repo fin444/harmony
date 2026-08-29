@@ -84,13 +84,13 @@ export const populate = {
         for(let channel of channels) {
             let container = document.createElement("div");
             container.className = ("list-button-container");
+            container.dataset.channelId = channel.id;
+            container.dataset.name = channel.name;
 
             let channelButtonElm = document.createElement("button");
             channelButtonElm.textContent = '# '+ channel.name;
             channelButtonElm.className = 'channel-button';
             channelButtonElm.type = 'button';
-            container.dataset.channelId = channel.id;
-            container.dataset.name = channel.name;
 
             let renameButtonElm = getElement.renameButton(channel, "channel");
             let deleteButtonElm = getElement.deleteButton(channel, "channel");
@@ -138,14 +138,14 @@ export const populate = {
             channelList.append(container);
         }
 
-        let channelButtonElm = document.createElement("button");
-        channelButtonElm.textContent = '+ New channel';
-        channelButtonElm.className = 'channel-button';
-        channelButtonElm.type = 'button';
-        channelButtonElm.addEventListener("click", () => {
+        let newChannelButtonElm = document.createElement("button");
+        newChannelButtonElm.textContent = '+ New channel';
+        newChannelButtonElm.className = 'channel-button';
+        newChannelButtonElm.type = 'button';
+        newChannelButtonElm.addEventListener("click", () => {
             sendHandlers.createThing('channel', 'Untitled channel', groupId);
         });
-        channelList.append(channelButtonElm);
+        channelList.append(newChannelButtonElm);
         
         groupButtonContainerElm.after(channelList);
     },

@@ -17,11 +17,16 @@
     color: var(--text-primary);
 }
 
-.logo {
+.logo-icon {
   width: 48px;
   aspect-ratio: 1;
   height: auto;
   object-fit: contain;
+  width: 32px; /* Set your desired logo width */
+height: 32px; /* Set your desired logo height */
+background-color: var(--text-primary);
+-webkit-mask: url("/asset/vector/logo.svg") no-repeat center / contain;
+mask: url("/asset/vector/logo.svg") no-repeat center / contain;
 }
 
 
@@ -46,7 +51,7 @@
 
 button, input {
     background-color: var(--elm-highlight-color);
-    border-radius: 10px;
+    border-radius: 5px;
     border-style: none;
     height: 30px;
     padding-left: 10px;
@@ -65,7 +70,6 @@ button {
     transition: filter 0.2s, box-shadow 0.2s, background-color 0.2s, transform 0.1s, text-shadow 0.2s;
     -webkit-tap-highlight-color: transparent; /* Removes the flicker on iPad/Mobile */
     border: 2px solid #00000018;
-
 }
 button:hover {
   transform: translateY(-1.3px);
@@ -75,12 +79,10 @@ button:hover {
 button:active{
   transform: translateY(1px);
   box-shadow: none;
-  /* text-shadow: 0rem 0rem 2rem #ffffffd8, 0rem 0rem 4rem #ffffffd8; */
-
 }
 
 img {
-    border-radius: 15px;
+    border-radius: 5px;
 }
 
 
@@ -220,18 +222,15 @@ h1, h2, h3 {
 .channel-button, .mini-channel-button {
     anchor-name: --group-button;
     height: 25px;
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
 }
 .channel-button {
     flex: 1;
     text-align: left;
 }
-
 .channel-button.is-selected {
     box-shadow: inset 0px 2px 50px rgba(128, 128, 128, 0.5);
 
 }
-
 
 
 .sidebar-footer {
@@ -248,13 +247,20 @@ h1, h2, h3 {
     width: 30px;
     height: 30px;
     margin-left: 10px;
+    border-radius: 100px;
 }
 
 
 
 /* popup */
 dialog {
+    display: flex;
     z-index: 10;
+    position: fixed;
+    margin-top: 200px;
+    border: none;
+    border-radius: 10px;
+    gap: 10px;
 }
 .obscure {
     position: fixed;
@@ -300,7 +306,7 @@ dialog {
 .chat-input-div {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
     margin: 10px;
     height: 30px;
     flex-direction: row;
