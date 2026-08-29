@@ -206,6 +206,7 @@ export const getElement = {
             replyContainer.prepend(clearButton);
             let replyText = replyContainer.querySelector(".reply-text");
             replyText.textContent = "↪ Replying to:";
+            replyContainer.classList.add("chat-footer-reply-container");
             element.chatFooter.insertBefore(replyContainer, element.chatFooter.children[1]);
             session.messageReplyId = id;
         });
@@ -227,12 +228,14 @@ export const getElement = {
     },
     yesOrNoForm: function (prompt) {
         let form = document.createElement("form");
+        form.className = "popup-form";
         let promptElm = document.createElement("h2");
         promptElm.textContent = prompt;
 
         let yesButton = document.createElement("button");
         yesButton.type = "submit";
         yesButton.textContent = "Yes";
+
 
         let noButton = document.createElement("button");
         noButton.type = "reset";
@@ -246,6 +249,7 @@ export const getElement = {
     },
     textInputForm: function (placeholder) {
         let form = document.createElement("form");
+        form.className = "popup-form";
 
         let textInput = document.createElement("input");
         textInput.type = "text";
@@ -253,7 +257,7 @@ export const getElement = {
 
         let yesButton = document.createElement("button");
         yesButton.type = "submit";
-        yesButton.textContent = "Done";
+        yesButton.textContent = "Confirm";
         form.addEventListener("submit", () => {
             form.dataset.string = textInput.value;
         });
@@ -282,6 +286,7 @@ export const getElement = {
                 console.log(`Deleting ${thingType} ${thing.name} with ID: ${thing.id}`);
                 sendHandlers.deleteThing(thingType, thing.id);
             });
+
         });
         return deleteButtonElm;
     },
@@ -446,6 +451,17 @@ export function createPopup (form, onSubmit) {
     let popup = document.createElement("dialog");
     popup.open = true;
 
+    popup.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            form.requestSubmit();
+        } else if (event.key === "Escape") {
+            event.preventDefault();
+            destroy(popup);
+            destroy(obscure);
+        }
+    });
+
     let obscure = document.createElement("div");
     obscure.className = "obscure";
     obscure.addEventListener("click", () => {
@@ -454,7 +470,8 @@ export function createPopup (form, onSubmit) {
     });
 
     form.method = "dialog";
-    form.addEventListener("submit", () => {
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
         console.log("Form submitted.");
         onSubmit();
         destroy(popup);

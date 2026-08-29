@@ -17,6 +17,11 @@
     color: var(--text-primary);
 }
 
+.blur-overlay {
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
 .logo-icon {
     aspect-ratio: 1;
     height: auto;
@@ -49,9 +54,9 @@
 
 
 button, input {
+    border: 2px solid rgb(from var(--text-primary) r g b / 0.1);
     background-color: var(--elm-highlight-color);
     border-radius: 5px;
-    border-style: none;
     height: 30px;
     padding-left: 10px;
     padding-right: 10px;
@@ -68,7 +73,7 @@ button {
     cursor: pointer;
     transition: filter 0.2s, box-shadow 0.2s, background-color 0.2s, transform 0.1s, text-shadow 0.2s;
     -webkit-tap-highlight-color: transparent; /* Removes the flicker on iPad/Mobile */
-    border: 2px solid #00000018;
+    
 }
 button:hover {
   transform: translateY(-1.3px);
@@ -258,6 +263,10 @@ h1, h2, h3 {
 
 
 /* popup */
+.popup-form {
+    display: flex;
+    gap: 10px;
+}
 dialog {
     display: flex;
     z-index: 10;
@@ -265,7 +274,7 @@ dialog {
     margin-top: 200px;
     border: none;
     border-radius: 10px;
-    gap: 10px;
+
 }
 .obscure {
     position: fixed;
@@ -311,13 +320,6 @@ dialog {
     background: linear-gradient(
         to bottom,
         var(--bg-primary) 0%,
-        var(--bg-primary) 35%,
-        rgb(from var(--bg-primary) r g b / 0.95) 48%,
-        rgb(from var(--bg-primary) r g b / 0.82) 59%,
-        rgb(from var(--bg-primary) r g b / 0.63) 69%,
-        rgb(from var(--bg-primary) r g b / 0.42) 78%,
-        rgb(from var(--bg-primary) r g b / 0.22) 86%,
-        rgb(from var(--bg-primary) r g b / 0.08) 93%,
         rgb(from var(--bg-primary) r g b / 0) 100%
     );
     
@@ -335,18 +337,10 @@ dialog {
     left: 0;
     right: 0;
     z-index: 500;
-    /* displ/ay: flex; */
     flex-direction: column;
     background: linear-gradient(
         to top,
         var(--bg-primary) 0%,
-        var(--bg-primary) 35%,
-        rgb(from var(--bg-primary) r g b / 0.95) 48%,
-        rgb(from var(--bg-primary) r g b / 0.82) 59%,
-        rgb(from var(--bg-primary) r g b / 0.63) 69%,
-        rgb(from var(--bg-primary) r g b / 0.42) 78%,
-        rgb(from var(--bg-primary) r g b / 0.22) 86%,
-        rgb(from var(--bg-primary) r g b / 0.08) 93%,
         rgb(from var(--bg-primary) r g b / 0) 100%
     );
 }
@@ -366,10 +360,13 @@ dialog {
     padding-top: 5px;
     padding-left: 10px;
     padding-bottom: 5px;
-    background-color: var(--bg-secondary);
+    background-color: rgb(from var(--bg-primary) r g b / 0.7);
     display:flex;
     flex-direction: row;
     border-radius: 4px;
+}
+.chat-footer-reply-container {
+    background-color: rgb(from var(--bg-primary) r g b / 0.7);
 }
 .chat-input-container {
     flex: 1;
@@ -381,9 +378,15 @@ dialog {
     flex-direction: row;
     flex-wrap: nowrap;
 }
+.attach-button, .type-box{
+    background-color: rgb(from var(--bg-primary) r g b / 0.7);
+}
 .type-box {
     font-size: var(--chat-font-size);
     flex: 1;
+}
+.type-box::placeholder {
+    color: rgb(from var(--text-primary) r g b / 0.5);
 }
 .send-button {
     flex: 0 0 auto;
@@ -485,7 +488,3 @@ table {
     --accent-color: #60a5fa;
   }
 }
-
-/* * {
-    border: solid red 1px;
-} */
