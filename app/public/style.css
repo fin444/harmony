@@ -124,20 +124,23 @@ h1, h2, h3 {
     inset: 0;
     display: flex;
     gap: 0px;
-    /* border: 2px solid blue; */
 }
 
 .sidebar-view {
     z-index: 2;
     flex: 0 0 0;
     display: flex;
-    /* resize: horizontal; */
     overflow: auto;
     flex-direction: column;
     background-color: var(--bg-secondary);
-    /* width: 20%; */
     max-width: 500px;
     min-width: 200px;
+}
+.sidebar-header {
+    display: flex; 
+    flex-direction: row; 
+    align-items: center;
+    justify-content: center;
 }
 
 
