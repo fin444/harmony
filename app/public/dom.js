@@ -8,6 +8,7 @@ export const element = {
     userPfp : document.getElementById("profile-image"),
     signoutButton : document.getElementById("sign-out"),
     chatHeader : document.getElementById("chat-header"),
+    chatFooter : document.getElementById("chat-footer"),
     chatHeaderTitle : document.getElementById("chat-header-text"),
     inviteUserButton : document.getElementById("invite-user"),
     chatInputContainer : document.getElementById("input"),
@@ -167,7 +168,7 @@ export const clear = {
         }
     },
     replyContainer : function () {
-        element.chatInputContainer.querySelector(".chat-reply-container").remove();
+        element.chatFooter.querySelector(".chat-reply-container").remove();
     }
 }
 
@@ -199,9 +200,12 @@ export const getElement = {
             let replyContainer = getElement.replyContainer(id);
             let clearButton = document.createElement("button");
             clearButton.textContent = "x";
-            clearButton.addEventListener("click", () => {clear.replyContainer(); session.messageReplyId = null;});
+            clearButton.className = "mini-x-button";
+            clearButton.addEventListener("click", () => {replyContainer.remove(); session.messageReplyId = null;});
             replyContainer.prepend(clearButton);
-            element.chatInputContainer.prepend(replyContainer);
+            let replyText = replyContainer.querySelector(".reply-text");
+            replyText.textContent = "↪ Replying to:";
+            element.chatFooter.prepend(replyContainer);
             session.messageReplyId = id;
         });
         return button;
@@ -302,7 +306,7 @@ export const getElement = {
         replyContainer.className = "chat-reply-container";
 
         let replyText = document.createElement("p");
-        replyText.className = "chat-message-body";
+        replyText.className = "chat-message-body reply-text";
         replyText.textContent = "↪ Reply to:";
         replyContainer.append(replyText);
 

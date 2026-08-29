@@ -34,6 +34,7 @@ export function sendMessage() {
     console.log("Sending message in channel ", getChannel(), ": ", messageText);
     sendHandlers.sendMessage(getChannel(), messageText, session.messageFileId, session.messageReplyId);
     session.messageReplyId = null;
+    session.messageFileId = null;
     clear.replyContainer();
 
 }

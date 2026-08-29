@@ -18,15 +18,14 @@
 }
 
 .logo-icon {
-  width: 48px;
-  aspect-ratio: 1;
-  height: auto;
-  object-fit: contain;
-  width: 32px; /* Set your desired logo width */
-height: 32px; /* Set your desired logo height */
-background-color: var(--text-primary);
--webkit-mask: url("/asset/vector/logo.svg") no-repeat center / contain;
-mask: url("/asset/vector/logo.svg") no-repeat center / contain;
+    aspect-ratio: 1;
+    height: auto;
+    object-fit: contain;
+    width: 32px;
+    height: 32px;
+    background-color: var(--text-primary);
+    -webkit-mask: url("/asset/vector/logo.svg") no-repeat center / contain;
+    mask: url("/asset/vector/logo.svg") no-repeat center / contain;
 }
 
 
@@ -303,7 +302,18 @@ dialog {
     margin: 0 0 0 var(--header-margin);
 }
 
-.chat-input-div {
+.chat-footer {
+    display: flex;
+    flex-direction: column;
+}
+.mini-x-button {
+    width: 15px;
+    height: 15px;
+    padding: 0px;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+.chat-input-container {
     display: flex;
     align-items: center;
     gap: 5px;
