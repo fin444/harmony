@@ -542,6 +542,7 @@ export function prependMessage(elm) {
 
 export function deleteMessage(id) {
     findMessageElmById(id).remove();
+    fixMessages();
 }
 
 export function findMessageElmById(id) {
@@ -549,6 +550,21 @@ export function findMessageElmById(id) {
         if (elm.dataset.id === id.toString()) {
             return elm;
         }
+    }
+}
+
+function refreshDuplicates() {
+    console.log("Refreshing message styles.");
+    let chatMessages = element.chatMessagesContainer.children;
+    for(let i = 0; i < chatMessages.length; i++) {
+        let messageHeader = chatMessages[i].querySelector(".chat-message-div");
+        let profilePicture = messageHeader.querySelector(".chat-message-profile-pic");
+        let username = messageHeader.querySelector(".chat-message-username");
+        let timestamp = messageHeader.querySelector(".chat-message-timestamp");
+
+        profilePicture.classList.remove("hidden");
+        username.classList.remove("hidden");
+        timestamp.classList.remove("chat-message-timestamp-cascaded");
     }
 }
 
@@ -591,6 +607,7 @@ function sortMessages() {
 }
 
 export function fixMessages() {
+    refreshDuplicates();
     sortMessages();
     clearDuplicateMessages();
     cascadeDuplicateUsersInChat();
